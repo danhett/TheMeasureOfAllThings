@@ -16,6 +16,11 @@ import java.io.IOException;
 
 public class symmetries extends PApplet {
 
+class Sketcher {
+    Sketcher(Symmetries ref) {
+    println("[sketch]");
+  }
+}
 
 
 HandyRenderer h1, h2, h3, h4;
@@ -28,9 +33,14 @@ int stage = 0;
 int tick = 0;
 int maxTick = 50;
 
+Sketcher s;
+
 public void setup()
 {  
-  
+  size(1024, 768);
+
+  s = new Sketcher(this);
+  println("yo");
 
   pg = createGraphics(1024, 768);
   pg.smooth();
@@ -152,7 +162,6 @@ public void keyPressed() {
   lastX = 0;
   lastY = 0;
 }
-  public void settings() {  size(800, 600); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "symmetries" };
     if (passedArgs != null) {

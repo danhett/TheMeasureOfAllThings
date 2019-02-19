@@ -5,8 +5,11 @@ HandyRenderer pen;
 PShape base;
 PShape overlay;
 
+PShape[] penShapes;
+
 void setup() {
-  fullScreen();
+  //fullScreen();
+  size(1024, 768);
   background(255);
   base = loadShape("base.svg");
   overlay = loadShape("overlay.svg");
@@ -18,7 +21,8 @@ void setup() {
   pen = HandyPresets.createMarker(this);
 
   drawBase();
-  drawOverlay();
+  populateOverlay();
+  //drawOverlay();
 }
 
 void drawBase() {
@@ -42,34 +46,58 @@ void drawBase() {
         );
     } 
     catch (Exception e) {
-      e.printStackTrace();
+      //e.printStackTrace();
     }
   }
   popMatrix();
 }
 
-void drawOverlay() {
-  pushMatrix();
-  translate(width/2 - 400, height/2 - 400);
+void populateOverlay() {
+  penShapes = new PShape[overlay.getChildCount()];
+
   for (int i = 0; i < overlay.getChildCount(); i++) {
     PShape shape = overlay.getChild(i);
-
-    try {
-      pen.line(
-        shape.getParams()[0], 
-        shape.getParams()[1], 
-        shape.getParams()[2], 
-        shape.getParams()[3]
-        );
-    } 
-    catch (Exception e) {
-      e.printStackTrace();
-    }
-  } 
-  popMatrix();
+    penShapes[i] = shape;
+  }
 }
 
+
 void draw() {
-  //background(255);
-  //shape(svg, 0, 0, 800, 800);
+  drawOverlay();
+}
+
+
+int timer = 4;
+int currentTime = 0;
+int currentSteps = -20;
+int maxSteps;
+void drawOverlay() {
+  maxSteps = penShapes.length;
+
+  pushMatrix();
+  translate(width/2 - 400, height/2 - 400);
+
+  if (currentTime < timer) {
+    currentTime++;
+  } else {
+    currentTime = 0;
+
+    if (currentSteps < maxSteps) {
+      try {
+        pen.line(
+          penShapes[currentSteps].getParams()[0], 
+          penShapes[currentSteps].getParams()[1], 
+          penShapes[currentSteps].getParams()[2], 
+          penShapes[currentSteps].getParams()[3]
+          );
+      } 
+      catch (Exception e) {
+        //e.printStackTrace();
+      }
+      
+      currentSteps++; 
+    } 
+  }
+
+  popMatrix();
 }

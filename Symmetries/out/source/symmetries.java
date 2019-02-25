@@ -4,6 +4,7 @@ import processing.event.*;
 import processing.opengl.*; 
 
 import org.gicentre.handy.*; 
+import org.gicentre.handy.*; 
 
 import java.util.HashMap; 
 import java.util.ArrayList; 
@@ -14,156 +15,158 @@ import java.io.InputStream;
 import java.io.OutputStream; 
 import java.io.IOException; 
 
-public class symmetries extends PApplet {
+public class Symmetries extends PApplet {
+
+
+
+HandyRenderer pencil;
+HandyRenderer pen;
+PShape base;
+PShape overlay;
+
+PShape[] pencilShapes;
+PShape[] penShapes;
+
+public void setup() {
+  
+  //size(1024, 768);
+  background(255);
+  base = loadShape("base.svg");
+  overlay = loadShape("overlay.svg");
+
+  pencil = HandyPresets.createPencil(this);
+  //h1.setStrokeWeight(0.5);
+  pencil.setRoughness(0.5f);
+
+  pen = HandyPresets.createMarker(this);
+
+  //drawBase();
+  populateBase();
+  populateOverlay();
+}
+
+public void populateBase() {
+  pencilShapes = new PShape[base.getChildCount()];
+
+  for (int i = 0; i < base.getChildCount(); i++) {
+    PShape shape = base.getChild(i);
+    pencilShapes[i] = shape;
+  }
+}
+
+public void populateOverlay() {
+  penShapes = new PShape[overlay.getChildCount()];
+
+  for (int i = 0; i < overlay.getChildCount(); i++) {
+    PShape shape = overlay.getChild(i);
+    penShapes[i] = shape;
+  }
+}
+
+
+public void draw() {
+  drawOverlay();
+  drawBase();
+}
+
+
+int timer = 4;
+int currentTime = 0;
+int currentSteps = -30;
+int maxSteps;
+public void drawOverlay() {
+  maxSteps = penShapes.length;
+
+  pushMatrix();
+  translate(width/2 - 400, height/2 - 400);
+
+  if (currentTime < timer) {
+    currentTime++;
+  } else {
+    currentTime = 0;
+
+    if (currentSteps < maxSteps) {
+      try {
+        pen.line(
+          penShapes[currentSteps].getParams()[0], 
+          penShapes[currentSteps].getParams()[1], 
+          penShapes[currentSteps].getParams()[2], 
+          penShapes[currentSteps].getParams()[3]
+          );
+      } 
+      catch (Exception e) {
+        //e.printStackTrace();
+      }
+      
+      currentSteps++; 
+    } 
+  }
+
+  popMatrix();
+}
+
+int penciltimer = 2;
+int pencilcurrentTime = 0;
+int pencilcurrentSteps = -10;
+int pencilmaxSteps;
+public void drawBase() {
+  pencilmaxSteps = pencilShapes.length;
+
+  pushMatrix();
+  translate(width/2 - 400, height/2 - 400);
+
+  if (pencilcurrentTime < penciltimer) {
+    pencilcurrentTime++;
+  } else {
+    pencilcurrentTime = 0;
+
+    if (pencilcurrentSteps < pencilmaxSteps) {
+      try {
+        pencil.line(
+          pencilShapes[pencilcurrentSteps].getParams()[0], 
+          pencilShapes[pencilcurrentSteps].getParams()[1], 
+          pencilShapes[pencilcurrentSteps].getParams()[2], 
+          pencilShapes[pencilcurrentSteps].getParams()[3]
+          );
+      } 
+      catch (Exception e) {
+        //e.printStackTrace();
+      }
+      
+      pencilcurrentSteps++; 
+    } 
+  }
+
+  popMatrix();
+}
+
+
+// STACK - main array with SketchLine, SketchEllipse, SketchRect and SketchText maybe
+// drawSketchObject methods add them to the stack
+// draw() updates each one and handles timing maybe
 
 class Sketcher {
-    Sketcher(Symmetries ref) {
+  Sketcher(Symmetries ref) {
     println("[sketch]");
+
+    //markerLines = createGraphics(1024, 768);
+    //pg.smooth();
+
+    //h1 = HandyPresets.createPencil(ref);
+    //h1.setStrokeWeight(0.5);
+    //h1.setRoughness(1);
+  }
+
+  public void drawSketchLine(int xS, int yS, int xE, int yE, int dur) {
+    //h1.line(xS, xS, xE, yE);
+  }
+
+  public void draw() {
   }
 }
-
-
-HandyRenderer h1, h2, h3, h4;
-float c = 300;
-float b = c * 1.5f;
-PGraphics pg;
-Boolean drawn = false;
-
-int stage = 0;
-int tick = 0;
-int maxTick = 50;
-
-Sketcher s;
-
-public void setup()
-{  
-  size(1024, 768);
-
-  s = new Sketcher(this);
-  println("yo");
-
-  pg = createGraphics(1024, 768);
-  pg.smooth();
-
-  h1 = HandyPresets.createPencil(this);
-  h1.setStrokeWeight(0.5f);
-  h1.setRoughness(1);
-
-  h2 = HandyPresets.createMarker(this);
-  h2.setGraphics(pg);
-  h2.setStrokeWeight(2);
-  //noLoop();
-
-  drawMatrix();
-}
-
-public void drawMatrix() {
-  stroke(0, 0, 0, 100);
-  strokeWeight(1);
-  h1.setSeed(1234);
-
-  noFill();
-
-  if (stage >= 1) {
-    // horizontal line
-    h1.line(width/2 - c, height/2, width/2 + c, height/2);
-  }
-
-  if (stage >= 2) {
-    // guide circle
-    h1.ellipse(width/2, height/2, c, c);
-  }
-
-  if (stage >= 3) {
-    // arcs
-    stroke(204, 102, 0, 50);
-    h1.ellipse(width/2 - c/2, height/2, b, b);
-    h1.ellipse(width/2 + c/2, height/2, b, b);
-  }
-
-  if (stage >= 4) {
-    // centre dividing line
-    stroke(204, 102, 0, 100);
-    h1.line(width/2, height/2 - b/2, width/2, height/2 + b/2);
-  }
-
-  if (stage >= 5) {
-    // four circles
-    stroke(204, 0, 100, 100);
-    h1.ellipse(width/2 - c/2, height/2, c, c);
-    h1.ellipse(width/2 + c/2, height/2, c, c);
-    h1.ellipse(width/2, height/2 - c/2, c, c);
-    h1.ellipse(width/2, height/2 + c/2, c, c);
-  }
-
-  if (stage >=6) {
-    // box
-    stroke(0, 0, 0, 100);
-    rectMode(CENTER);
-    h1.rect(width/2, height/2, c, c);
-  }
-
-  if (stage >= 7) {
-    // inner boxes
-    rect(width/2, height/2, c/1.42f, c/1.42f);
-    pushMatrix();
-    translate(width/2, height/2);
-    rotate(radians(45));
-    h1.rect(0, 0, c/1.42f, c/1.42f);
-    popMatrix();
-  }
-
-  if (stage >=8) {
-    // lines
-    pushMatrix();
-    translate(width/2, height/2);
-    for (int i = 0; i < 8; i++) {
-      rotate(radians(360/PApplet.parseFloat(8)));
-      //ellipse(80, 0, 30, 30);
-      h1.line(0, 0, c/1.4f, 0);
-    }
-    popMatrix();
-  }
-}
-
-public void draw()
-{
-   if(tick < maxTick) {
-    tick++;
-  }
-  else {
-   stage++;
-   tick = 0;
-  }
-  
-  background(255);
-  drawMatrix();
-  image(pg, 0, 0);
-}
-
-int lastX = 0;
-int lastY = 0;
-public void mousePressed() {
-  if (lastX == 0) {
-    lastX = mouseX;
-    lastY = mouseY;
-  } else {
-    pg.beginDraw();
-    //pg.strokeWeight(3);
-    //pg.stroke(0);
-    h2.line(lastX, lastY, mouseX, mouseY);
-    lastX = mouseX;
-    lastY = mouseY;
-    pg.endDraw();
-  }
-}
-
-public void keyPressed() {
-  lastX = 0;
-  lastY = 0;
-}
+  public void settings() {  fullScreen(); }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "symmetries" };
+    String[] appletArgs = new String[] { "Symmetries" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {

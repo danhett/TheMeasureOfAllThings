@@ -22,22 +22,18 @@ class Tile {
   int xPos;
   int yPos;
   float scaleFactor;
+  float[] params;
 
   Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor) {
-    println("[tile]");
-
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
 
-    //blendMode(MULTIPLY);
-
     noFill();
+    noStroke();
     ellipseMode(CORNER);
 
-
-    //pg = createGraphics(int(800 * scaleFactor), int(800 * scaleFactor));
     pg = createGraphics(800, 800);
 
     loadSVGs();
@@ -80,14 +76,7 @@ class Tile {
   }
 
   void draw() {
-    //background(255);
-
-    //if (finished)
-     // background(255);
-
-    //if (canDraw)
-      drawColours();
-
+    drawColours();
     drawBase();
     drawOverlay();
   }
@@ -117,23 +106,26 @@ class Tile {
     for(int i = 0; i < pencilcurrentSteps; i++) {
         pencil.setSeed(1234);
         
-        if (pencilShapes[i].getKind() == SVG_LINE) {
-          pencil.line(
-            pencilShapes[i].getParam(0) * scaleFactor, 
-            pencilShapes[i].getParam(1) * scaleFactor, 
-            pencilShapes[i].getParam(2) * scaleFactor, 
-            pencilShapes[i].getParam(3) * scaleFactor
-          );
-        } else if (pencilShapes[i].getKind() == SVG_CIRCLE) {
+        int kind = pencilShapes[i].getKind();
+        params = pencilShapes[i].getParams();
 
-          pencil.ellipse(
-            pencilShapes[i].getParam(0) * scaleFactor, 
-            pencilShapes[i].getParam(1) * scaleFactor, 
-            pencilShapes[i].getParam(2) * scaleFactor, 
-            pencilShapes[i].getParam(3) * scaleFactor
+        if (kind == SVG_LINE) {
+          pencil.line(
+            params[0] * scaleFactor, 
+            params[1] * scaleFactor, 
+            params[2] * scaleFactor, 
+            params[3] * scaleFactor
           );
-        }   
-      }
+        } 
+        else if (kind == SVG_CIRCLE) {
+          pencil.ellipse(
+            params[0] * scaleFactor, 
+            params[1] * scaleFactor, 
+            params[2] * scaleFactor, 
+            params[3] * scaleFactor
+          );
+      }   
+    }
 
     popMatrix();
   }
@@ -151,7 +143,8 @@ class Tile {
 
     if (currentTime < timer) {
       currentTime++;
-    } else {
+    } 
+    else {
       currentTime = 0;
 
       if (currentSteps < maxSteps) {     
@@ -164,14 +157,16 @@ class Tile {
 
     for(int i = 0; i < currentSteps; i++) {
       pen.setSeed(1234);
+
+      params = penShapes[i].getParams();
       
-        pen.line(
-          penShapes[i].getParam(0) * scaleFactor, 
-          penShapes[i].getParam(1) * scaleFactor, 
-          penShapes[i].getParam(2) * scaleFactor, 
-          penShapes[i].getParam(3) * scaleFactor
-        );
-      }
+      pen.line(
+        params[0] * scaleFactor, 
+        params[1] * scaleFactor, 
+        params[2] * scaleFactor, 
+        params[3] * scaleFactor
+      );
+    }
 
     popMatrix();
   }
@@ -194,11 +189,12 @@ class Tile {
       } else {
         shapecurrentTime = 0;
 
-        //colours.disableStyle();
+        colours.disableStyle();
 
         if (shapecurrentSteps < shapemaxSteps) {
           pg.beginDraw();
-          //pg.fill(255, 0, 0, 100);
+          pg.fill(random(200), random(200), 0, 100);
+          pg.noStroke();
           pg.shape(colours.getChild(shapecurrentSteps), 0, 0); 
           pg.endDraw();
 

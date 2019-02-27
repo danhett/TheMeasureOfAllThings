@@ -21,15 +21,18 @@ Tile tile2;
 Tile tile3;
 Tile tile4;
 
-int delay = 0;
+int timeDelay = 0;
 
 public void setup() {
-  tile = new Tile(this, width/2, height/2, 0.5f);
-  //tile2 = new Tile(this, 800, 200, 0.5);
-  //tile3 = new Tile(this, 400, 600, 0.5);
-  //tile4 = new Tile(this, 800, 600, 0.5);
+  tile = new Tile(this, 200, 200, 0.5f);
+  tile2 = new Tile(this, 600, 200, 0.5f);
+  tile3 = new Tile(this, 200, 600, 0.5f);
+  tile4 = new Tile(this, 600, 600, 0.5f);
 
   
+  frameRate(60);
+  //fullScreen();
+  //smooth();
 }
 
 
@@ -38,16 +41,16 @@ public void draw() {
 
   tile.draw();
 
-  //if(delay > 20)
-   // tile2.draw();
+  if(timeDelay > 20)
+    tile2.draw();
 
-  //if(delay > 40)
-  //  tile3.draw();
+  if(timeDelay > 40)
+    tile3.draw();
 
-  //if(delay > 60)
-    //tile4.draw();
+  if(timeDelay > 60)
+    tile4.draw();
 
-  delay++;
+  timeDelay++;
 }
 
 
@@ -73,22 +76,18 @@ class Tile {
   int xPos;
   int yPos;
   float scaleFactor;
+  float[] params;
 
   Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor) {
-    println("[tile]");
-
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
 
-    //blendMode(MULTIPLY);
-
     noFill();
+    noStroke();
     ellipseMode(CORNER);
 
-
-    //pg = createGraphics(int(800 * scaleFactor), int(800 * scaleFactor));
     pg = createGraphics(800, 800);
 
     loadSVGs();
@@ -131,14 +130,7 @@ class Tile {
   }
 
   public void draw() {
-    //background(255);
-
-    //if (finished)
-     // background(255);
-
-    //if (canDraw)
-      drawColours();
-
+    drawColours();
     drawBase();
     drawOverlay();
   }
@@ -168,23 +160,26 @@ class Tile {
     for(int i = 0; i < pencilcurrentSteps; i++) {
         pencil.setSeed(1234);
         
-        if (pencilShapes[i].getKind() == SVG_LINE) {
-          pencil.line(
-            pencilShapes[i].getParam(0) * scaleFactor, 
-            pencilShapes[i].getParam(1) * scaleFactor, 
-            pencilShapes[i].getParam(2) * scaleFactor, 
-            pencilShapes[i].getParam(3) * scaleFactor
-          );
-        } else if (pencilShapes[i].getKind() == SVG_CIRCLE) {
+        int kind = pencilShapes[i].getKind();
+        params = pencilShapes[i].getParams();
 
-          pencil.ellipse(
-            pencilShapes[i].getParam(0) * scaleFactor, 
-            pencilShapes[i].getParam(1) * scaleFactor, 
-            pencilShapes[i].getParam(2) * scaleFactor, 
-            pencilShapes[i].getParam(3) * scaleFactor
+        if (kind == SVG_LINE) {
+          pencil.line(
+            params[0] * scaleFactor, 
+            params[1] * scaleFactor, 
+            params[2] * scaleFactor, 
+            params[3] * scaleFactor
           );
-        }   
-      }
+        } 
+        else if (kind == SVG_CIRCLE) {
+          pencil.ellipse(
+            params[0] * scaleFactor, 
+            params[1] * scaleFactor, 
+            params[2] * scaleFactor, 
+            params[3] * scaleFactor
+          );
+      }   
+    }
 
     popMatrix();
   }
@@ -202,7 +197,8 @@ class Tile {
 
     if (currentTime < timer) {
       currentTime++;
-    } else {
+    } 
+    else {
       currentTime = 0;
 
       if (currentSteps < maxSteps) {     
@@ -215,14 +211,16 @@ class Tile {
 
     for(int i = 0; i < currentSteps; i++) {
       pen.setSeed(1234);
+
+      params = penShapes[i].getParams();
       
-        pen.line(
-          penShapes[i].getParam(0) * scaleFactor, 
-          penShapes[i].getParam(1) * scaleFactor, 
-          penShapes[i].getParam(2) * scaleFactor, 
-          penShapes[i].getParam(3) * scaleFactor
-        );
-      }
+      pen.line(
+        params[0] * scaleFactor, 
+        params[1] * scaleFactor, 
+        params[2] * scaleFactor, 
+        params[3] * scaleFactor
+      );
+    }
 
     popMatrix();
   }
@@ -245,11 +243,12 @@ class Tile {
       } else {
         shapecurrentTime = 0;
 
-        //colours.disableStyle();
+        colours.disableStyle();
 
         if (shapecurrentSteps < shapemaxSteps) {
           pg.beginDraw();
-          //pg.fill(255, 0, 0, 100);
+          pg.fill(random(200), random(200), 0, 100);
+          pg.noStroke();
           pg.shape(colours.getChild(shapecurrentSteps), 0, 0); 
           pg.endDraw();
 
@@ -265,7 +264,7 @@ class Tile {
     popMatrix();
   }
 }
-  public void settings() {  fullScreen(); }
+  public void settings() {  size(1024, 768, P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Symmetries" };
     if (passedArgs != null) {

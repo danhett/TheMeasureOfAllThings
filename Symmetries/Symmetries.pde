@@ -4,6 +4,7 @@ HandyRenderer pencil;
 HandyRenderer pen;
 PShape base;
 PShape overlay;
+PShape colours;
 
 PShape[] pencilShapes;
 PShape[] penShapes;
@@ -11,22 +12,42 @@ PShape[] penShapes;
 int SVG_LINE = 4;
 int SVG_CIRCLE = 31;
 
+PGraphics pg;
+
+Boolean canDraw = false;
+Boolean finished = false;
+
 void setup() {
   fullScreen();
-  //size(1024, 768);
   background(255);
 
+  blendMode(DARKEST);
+
+  noFill();
+  ellipseMode(CORNER);
+
+
+  pg = createGraphics(800, 800);
+
+  loadSVGs();
+  createDrawingTools();
+  populateBase();
+  populateOverlay();
+}
+
+void loadSVGs() {
   base = loadShape("base.svg");
   overlay = loadShape("overlay.svg");
+  colours = loadShape("colours.svg");
+}
 
+
+void createDrawingTools() {
   pencil = HandyPresets.createPencil(this);
-  //h1.setStrokeWeight(0.5);
+  pencil.setStrokeWeight(1);
   pencil.setRoughness(0.1);
 
   pen = HandyPresets.createMarker(this);
-
-  populateBase();
-  populateOverlay();
 }
 
 void populateBase() {
@@ -49,8 +70,15 @@ void populateOverlay() {
 
 
 void draw() {
-  drawOverlay();
+  if (finished)
+    background(255);
+
+  if (canDraw)
+    drawColours();
+
+
   drawBase();
+  drawOverlay();
 }
 
 
@@ -83,6 +111,8 @@ void drawOverlay() {
       }
 
       currentSteps++;
+    } else {
+      canDraw = true;
     }
   }
 
@@ -97,6 +127,7 @@ void drawBase() {
   pencilmaxSteps = pencilShapes.length;
 
   pushMatrix();
+
   translate(width/2 - 400, height/2 - 400);
 
   if (pencilcurrentTime < penciltimer) {
@@ -105,9 +136,6 @@ void drawBase() {
     pencilcurrentTime = 0;
 
     if (pencilcurrentSteps < pencilmaxSteps) {        
-      println(pencilShapes[pencilcurrentSteps].getKind());
-      println("---");
-
       if (pencilShapes[pencilcurrentSteps].getKind() == SVG_LINE) {
         pencil.line(
           pencilShapes[pencilcurrentSteps].getParam(0), 
@@ -115,16 +143,14 @@ void drawBase() {
           pencilShapes[pencilcurrentSteps].getParam(2), 
           pencilShapes[pencilcurrentSteps].getParam(3)
           );
-      }
-      else if (pencilShapes[pencilcurrentSteps].getKind() == SVG_CIRCLE) {
-        ellipseMode(CORNER);
-        noFill();
-         pencil.ellipse(
+      } else if (pencilShapes[pencilcurrentSteps].getKind() == SVG_CIRCLE) {
+
+        pencil.ellipse(
           pencilShapes[pencilcurrentSteps].getParam(0), 
           pencilShapes[pencilcurrentSteps].getParam(1), 
           pencilShapes[pencilcurrentSteps].getParam(2), 
           pencilShapes[pencilcurrentSteps].getParam(3)
-          ); 
+          );
       }
 
       pencilcurrentSteps++;
@@ -132,4 +158,32 @@ void drawBase() {
   }
 
   popMatrix();
+}
+
+int shapetimer = 2;
+int shapecurrentTime = 0;
+int shapecurrentSteps = 0;
+int shapemaxSteps;
+void drawColours() {
+  shapemaxSteps = colours.getChildCount();
+
+  //translate(width/2 - 400, height/2 - 400);
+
+  if (shapecurrentTime < shapetimer) {
+    shapecurrentTime++;
+  } else {
+    shapecurrentTime = 0;
+
+    if (shapecurrentSteps < shapemaxSteps) {
+      pg.beginDraw();
+      pg.shape(colours.getChild(shapecurrentSteps), 0, 0); 
+      pg.endDraw();
+
+      shapecurrentSteps++;
+    } else {
+      finished = true;
+    }
+  }
+
+  image(pg, width/2 - 400, height/2 - 400);
 }

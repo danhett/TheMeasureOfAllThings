@@ -23,26 +23,50 @@ HandyRenderer pencil;
 HandyRenderer pen;
 PShape base;
 PShape overlay;
+PShape colours;
 
 PShape[] pencilShapes;
 PShape[] penShapes;
 
+int SVG_LINE = 4;
+int SVG_CIRCLE = 31;
+
+PGraphics pg;
+
+Boolean canDraw = false;
+Boolean finished = false;
+
 public void setup() {
   
-  //size(1024, 768);
   background(255);
-  base = loadShape("base.svg");
-  overlay = loadShape("overlay.svg");
 
-  pencil = HandyPresets.createPencil(this);
-  //h1.setStrokeWeight(0.5);
-  pencil.setRoughness(0.5f);
+  blendMode(DARKEST);
 
-  pen = HandyPresets.createMarker(this);
+  noFill();
+  ellipseMode(CORNER);
 
-  //drawBase();
+
+  pg = createGraphics(800, 800);
+
+  loadSVGs();
+  createDrawingTools();
   populateBase();
   populateOverlay();
+}
+
+public void loadSVGs() {
+  base = loadShape("base.svg");
+  overlay = loadShape("overlay.svg");
+  colours = loadShape("colours.svg");
+}
+
+
+public void createDrawingTools() {
+  pencil = HandyPresets.createPencil(this);
+  pencil.setStrokeWeight(1);
+  pencil.setRoughness(0.1f);
+
+  pen = HandyPresets.createMarker(this);
 }
 
 public void populateBase() {
@@ -65,8 +89,15 @@ public void populateOverlay() {
 
 
 public void draw() {
-  drawOverlay();
+  if (finished)
+    background(255);
+
+  if (canDraw)
+    drawColours();
+
+
   drawBase();
+  drawOverlay();
 }
 
 
@@ -97,9 +128,11 @@ public void drawOverlay() {
       catch (Exception e) {
         //e.printStackTrace();
       }
-      
-      currentSteps++; 
-    } 
+
+      currentSteps++;
+    } else {
+      canDraw = true;
+    }
   }
 
   popMatrix();
@@ -107,12 +140,13 @@ public void drawOverlay() {
 
 int penciltimer = 2;
 int pencilcurrentTime = 0;
-int pencilcurrentSteps = -10;
+int pencilcurrentSteps = 0;
 int pencilmaxSteps;
 public void drawBase() {
   pencilmaxSteps = pencilShapes.length;
 
   pushMatrix();
+
   translate(width/2 - 400, height/2 - 400);
 
   if (pencilcurrentTime < penciltimer) {
@@ -120,24 +154,57 @@ public void drawBase() {
   } else {
     pencilcurrentTime = 0;
 
-    if (pencilcurrentSteps < pencilmaxSteps) {
-      try {
+    if (pencilcurrentSteps < pencilmaxSteps) {        
+      if (pencilShapes[pencilcurrentSteps].getKind() == SVG_LINE) {
         pencil.line(
-          pencilShapes[pencilcurrentSteps].getParams()[0], 
-          pencilShapes[pencilcurrentSteps].getParams()[1], 
-          pencilShapes[pencilcurrentSteps].getParams()[2], 
-          pencilShapes[pencilcurrentSteps].getParams()[3]
+          pencilShapes[pencilcurrentSteps].getParam(0), 
+          pencilShapes[pencilcurrentSteps].getParam(1), 
+          pencilShapes[pencilcurrentSteps].getParam(2), 
+          pencilShapes[pencilcurrentSteps].getParam(3)
           );
-      } 
-      catch (Exception e) {
-        //e.printStackTrace();
+      } else if (pencilShapes[pencilcurrentSteps].getKind() == SVG_CIRCLE) {
+
+        pencil.ellipse(
+          pencilShapes[pencilcurrentSteps].getParam(0), 
+          pencilShapes[pencilcurrentSteps].getParam(1), 
+          pencilShapes[pencilcurrentSteps].getParam(2), 
+          pencilShapes[pencilcurrentSteps].getParam(3)
+          );
       }
-      
-      pencilcurrentSteps++; 
-    } 
+
+      pencilcurrentSteps++;
+    }
   }
 
   popMatrix();
+}
+
+int shapetimer = 2;
+int shapecurrentTime = 0;
+int shapecurrentSteps = 0;
+int shapemaxSteps;
+public void drawColours() {
+  shapemaxSteps = colours.getChildCount();
+
+  //translate(width/2 - 400, height/2 - 400);
+
+  if (shapecurrentTime < shapetimer) {
+    shapecurrentTime++;
+  } else {
+    shapecurrentTime = 0;
+
+    if (shapecurrentSteps < shapemaxSteps) {
+      pg.beginDraw();
+      pg.shape(colours.getChild(shapecurrentSteps), 0, 0); 
+      pg.endDraw();
+
+      shapecurrentSteps++;
+    } else {
+      finished = true;
+    }
+  }
+
+  image(pg, width/2 - 400, height/2 - 400);
 }
 
 
@@ -145,9 +212,9 @@ public void drawBase() {
 // drawSketchObject methods add them to the stack
 // draw() updates each one and handles timing maybe
 
-class Sketcher {
-  Sketcher(Symmetries ref) {
-    println("[sketch]");
+class Tile {
+  Tile(Symmetries ref) {
+    println("[tile]");
 
     //markerLines = createGraphics(1024, 768);
     //pg.smooth();
@@ -155,10 +222,6 @@ class Sketcher {
     //h1 = HandyPresets.createPencil(ref);
     //h1.setStrokeWeight(0.5);
     //h1.setRoughness(1);
-  }
-
-  public void drawSketchLine(int xS, int yS, int xE, int yE, int dur) {
-    //h1.line(xS, xS, xE, yE);
   }
 
   public void draw() {

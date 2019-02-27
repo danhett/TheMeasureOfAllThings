@@ -1,55 +1,4 @@
-import processing.core.*; 
-import processing.data.*; 
-import processing.event.*; 
-import processing.opengl.*; 
-
-import org.gicentre.handy.*; 
-
-import java.util.HashMap; 
-import java.util.ArrayList; 
-import java.io.File; 
-import java.io.BufferedReader; 
-import java.io.PrintWriter; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.io.IOException; 
-
-public class Symmetries extends PApplet {
-
-Tile tile;
-Tile tile2;
-Tile tile3;
-Tile tile4;
-
-int delay = 0;
-
-public void setup() {
-  tile = new Tile(this, width/2, height/2, 0.5f);
-  //tile2 = new Tile(this, 800, 200, 0.5);
-  //tile3 = new Tile(this, 400, 600, 0.5);
-  //tile4 = new Tile(this, 800, 600, 0.5);
-
-  
-}
-
-
-public void draw() {
-  background(255);
-
-  tile.draw();
-
-  //if(delay > 20)
-   // tile2.draw();
-
-  //if(delay > 40)
-  //  tile3.draw();
-
-  //if(delay > 60)
-    //tile4.draw();
-
-  delay++;
-}
-
+import org.gicentre.handy.*;
 
 class Tile {
   HandyRenderer pencil;
@@ -97,22 +46,22 @@ class Tile {
     populateOverlay();
   }
 
-  public void loadSVGs() {
+  void loadSVGs() {
     base = loadShape("base.svg");
     overlay = loadShape("overlay.svg");
     colours = loadShape("colours.svg");
   }
 
 
-  public void createDrawingTools() {
+  void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
-    pencil.setStrokeWeight(0.5f);
-    pencil.setRoughness(0.1f);
+    pencil.setStrokeWeight(0.5);
+    pencil.setRoughness(0.1);
 
     pen = HandyPresets.createMarker(reference);
   }
 
-  public void populateBase() {
+  void populateBase() {
     pencilShapes = new PShape[base.getChildCount()];
 
     for (int i = 0; i < base.getChildCount(); i++) {
@@ -121,7 +70,7 @@ class Tile {
     }
   }
 
-  public void populateOverlay() {
+  void populateOverlay() {
     penShapes = new PShape[overlay.getChildCount()];
 
     for (int i = 0; i < overlay.getChildCount(); i++) {
@@ -130,7 +79,7 @@ class Tile {
     }
   }
 
-  public void draw() {
+  void draw() {
     //background(255);
 
     //if (finished)
@@ -148,7 +97,7 @@ class Tile {
   int pencilcurrentTime = 0;
   int pencilcurrentSteps = 0;
   int pencilmaxSteps;
-  public void drawBase() {
+  void drawBase() {
     pencilmaxSteps = pencilShapes.length;
 
     pushMatrix();
@@ -193,7 +142,7 @@ class Tile {
   int currentTime = 0;
   int currentSteps = -30;
   int maxSteps;
-  public void drawOverlay() {
+  void drawOverlay() {
     maxSteps = penShapes.length;
 
     pushMatrix();
@@ -231,7 +180,7 @@ class Tile {
   int shapecurrentTime = 0;
   int shapecurrentSteps = 0;
   int shapemaxSteps;
-  public void drawColours() {
+  void drawColours() {
     shapemaxSteps = colours.getChildCount();
 
     pushMatrix();
@@ -263,15 +212,5 @@ class Tile {
     }
 
     popMatrix();
-  }
-}
-  public void settings() {  fullScreen(); }
-  static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "Symmetries" };
-    if (passedArgs != null) {
-      PApplet.main(concat(appletArgs, passedArgs));
-    } else {
-      PApplet.main(appletArgs);
-    }
   }
 }

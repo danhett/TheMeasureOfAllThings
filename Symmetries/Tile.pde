@@ -10,12 +10,14 @@ class Tile {
   PShape[] pencilShapes;
   PShape[] penShapes;
 
+  PImage paper;
+
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
   PGraphics pg;
 
-  Boolean canDraw = false;
+  //Boolean canDraw = false;
   Boolean finished = false;
 
   int CURRENT_STEP = 0;
@@ -42,6 +44,8 @@ class Tile {
     ellipseMode(CORNER);
 
     pg = createGraphics(800, 800);
+
+    paper =loadImage("paper.jpg");
 
     loadSVGs();
     createDrawingTools();
@@ -91,7 +95,11 @@ class Tile {
   }
 
   void draw() {
-    //drawColours();
+    tint(255, 100);
+    image(paper, 0, 0);
+    tint(255, 255);
+
+    drawColours();
     drawBase();
     drawOverlay();
     
@@ -201,8 +209,6 @@ OVERLAY
 
     if(CURRENT_STEP > PENCIL_STEPS && CURRENT_STEP < PENCIL_STEPS + maxSteps) {
       limit = CURRENT_STEP - PENCIL_STEPS;
-
-      println(limit);
     }
     else if(CURRENT_STEP < PENCIL_STEPS + 1){
       limit = 0;
@@ -237,31 +243,36 @@ COLOURS
     pushMatrix();
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
-    if(canDraw) {
-      //scale(scaleFactor, scaleFactor);
+    //if(canDraw) {
+      scale(scaleFactor, scaleFactor);
 
+      /*
       if (shapecurrentTime < shapetimer) {
         shapecurrentTime++;
       } else {
         shapecurrentTime = 0;
+      }
+      */
 
-        colours.disableStyle();
+      int limit = PEN_STEPS+PENCIL_STEPS;
 
-        if (shapecurrentSteps < shapemaxSteps) {
-          pg.beginDraw();
-          pg.fill(random(200), random(200), 0, 100);
-          pg.noStroke();
-          pg.shape(colours.getChild(shapecurrentSteps), 0, 0); 
-          pg.endDraw();
-
-          shapecurrentSteps++;
-        } else {
-          finished = true;
-        }
+      if(CURRENT_STEP > (PENCIL_STEPS+PEN_STEPS) && CURRENT_STEP < (PENCIL_STEPS+PEN_STEPS) + COLOUR_STEPS) {
+        limit = CURRENT_STEP - PENCIL_STEPS - PEN_STEPS;
+      }
+      else if(CURRENT_STEP < PEN_STEPS + PENCIL_STEPS + 1){
+        limit = 0;
       }
 
-      image(pg, 0, 0);
-    }
+      if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
+        pg.beginDraw();
+        pg.clear();
+        for(int i = 0; i <= limit; i++) {
+          pg.shape(colours.getChild(i), 0, 0); 
+        }
+        pg.endDraw();
+
+        image(pg, 0, 0);
+      }
 
     popMatrix();
   }

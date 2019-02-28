@@ -6,12 +6,12 @@ Tile tile4;
 int timeDelay = 0;
 
 void setup() {
-  tile = new Tile(this, 200, 200, 0.5);
-  tile2 = new Tile(this, 600, 200, 0.5);
-  tile3 = new Tile(this, 200, 600, 0.5);
-  tile4 = new Tile(this, 600, 600, 0.5);
+  tile = new Tile(this, width/2, height/2, 0.8);
+  //tile2 = new Tile(this, 600, 200, 0.5);
+  //tile3 = new Tile(this, 200, 600, 0.5);
+  //tile4 = new Tile(this, 600, 600, 0.5);
 
-  size(1024, 768, P2D);
+  size(1024, 768);
   frameRate(60);
   //fullScreen();
   //smooth();
@@ -23,6 +23,7 @@ void draw() {
 
   tile.draw();
 
+  /*
   if(timeDelay > 20)
     tile2.draw();
 
@@ -31,6 +32,7 @@ void draw() {
 
   if(timeDelay > 60)
     tile4.draw();
+  */
 
   timeDelay++;
 }

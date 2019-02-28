@@ -18,6 +18,13 @@ class Tile {
   Boolean canDraw = false;
   Boolean finished = false;
 
+  int CURRENT_STEP = 0;
+  int DRAW_STEPS = 0;
+
+  int PENCIL_STEPS = 0;
+  int PEN_STEPS = 0;
+  int COLOUR_STEPS = 0;
+
   Symmetries reference;
   int xPos;
   int yPos;
@@ -46,13 +53,21 @@ class Tile {
     base = loadShape("base.svg");
     overlay = loadShape("overlay.svg");
     colours = loadShape("colours.svg");
+
+    PENCIL_STEPS = base.getChildCount();
+    PEN_STEPS =  overlay.getChildCount();
+    COLOUR_STEPS = colours.getChildCount();
+
+    DRAW_STEPS = PENCIL_STEPS + PEN_STEPS + COLOUR_STEPS;
+
+    println(DRAW_STEPS);
   }
 
 
   void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
-    pencil.setStrokeWeight(0.5);
-    pencil.setRoughness(0.1);
+    pencil.setStrokeWeight(1);
+    pencil.setRoughness(0.5);
 
     pen = HandyPresets.createMarker(reference);
   }
@@ -76,12 +91,26 @@ class Tile {
   }
 
   void draw() {
-    drawColours();
+    //drawColours();
     drawBase();
     drawOverlay();
+    
+    updateReadout();
+  }
+
+  void updateReadout() {
+    CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
+
+    fill(255, 0, 0);
+    text(frameRate + "FPS", 20, 20);
+    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 40);
+    noFill();
   }
 
 
+/*
+BASE
+*/
   int penciltimer = 2;
   int pencilcurrentTime = 0;
   int pencilcurrentSteps = 0;
@@ -93,6 +122,7 @@ class Tile {
 
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
+    /*
     if (pencilcurrentTime < penciltimer) {
       pencilcurrentTime++;
     } else {
@@ -102,34 +132,44 @@ class Tile {
         pencilcurrentSteps++;
       }
     }
+    */
 
-    for(int i = 0; i < pencilcurrentSteps; i++) {
+    int limit = pencilmaxSteps;
+
+    if(CURRENT_STEP < pencilmaxSteps) {
+      limit = CURRENT_STEP;
+    }
+                
+    for(int i = 0; i < limit; i++) {
         pencil.setSeed(1234);
         
-        int kind = pencilShapes[i].getKind();
-        params = pencilShapes[i].getParams();
+          int kind = pencilShapes[i].getKind();
+          params = pencilShapes[i].getParams();
 
-        if (kind == SVG_LINE) {
-          pencil.line(
-            params[0] * scaleFactor, 
-            params[1] * scaleFactor, 
-            params[2] * scaleFactor, 
-            params[3] * scaleFactor
-          );
-        } 
-        else if (kind == SVG_CIRCLE) {
-          pencil.ellipse(
-            params[0] * scaleFactor, 
-            params[1] * scaleFactor, 
-            params[2] * scaleFactor, 
-            params[3] * scaleFactor
-          );
-      }   
+          if (kind == SVG_LINE) {
+            pencil.line(
+              params[0] * scaleFactor, 
+              params[1] * scaleFactor, 
+              params[2] * scaleFactor, 
+              params[3] * scaleFactor
+            );
+          } 
+          else if (kind == SVG_CIRCLE) {
+            pencil.ellipse(
+              params[0] * scaleFactor, 
+              params[1] * scaleFactor, 
+              params[2] * scaleFactor, 
+              params[3] * scaleFactor
+            );
+        }  
     }
 
     popMatrix();
   }
 
+/*
+OVERLAY
+*/
   int timer = 2;
   int currentTime = 0;
   int currentSteps = -30;
@@ -141,6 +181,7 @@ class Tile {
 
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
+    /*
     if (currentTime < timer) {
       currentTime++;
     } 
@@ -154,8 +195,20 @@ class Tile {
         canDraw = true;
       }
     }
+    */
 
-    for(int i = 0; i < currentSteps; i++) {
+    int limit = PEN_STEPS;
+
+    if(CURRENT_STEP > PENCIL_STEPS && CURRENT_STEP < PENCIL_STEPS + maxSteps) {
+      limit = CURRENT_STEP - PENCIL_STEPS;
+
+      println(limit);
+    }
+    else if(CURRENT_STEP < PENCIL_STEPS + 1){
+      limit = 0;
+    }
+
+    for(int i = 0; i < limit; i++) {
       pen.setSeed(1234);
 
       params = penShapes[i].getParams();
@@ -171,6 +224,9 @@ class Tile {
     popMatrix();
   }
 
+/*
+COLOURS
+*/
   int shapetimer = 2;
   int shapecurrentTime = 0;
   int shapecurrentSteps = 0;
@@ -182,7 +238,7 @@ class Tile {
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
     if(canDraw) {
-      scale(scaleFactor, scaleFactor);
+      //scale(scaleFactor, scaleFactor);
 
       if (shapecurrentTime < shapetimer) {
         shapecurrentTime++;

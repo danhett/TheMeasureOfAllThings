@@ -6,7 +6,7 @@ Tile tile4;
 int timeDelay = 0;
 
 void setup() {
-  tile = new Tile(this, width/2, height/2, 0.8);
+  tile = new Tile(this, width/2, height/2, 0.7);
   //tile2 = new Tile(this, 600, 200, 0.5);
   //tile3 = new Tile(this, 200, 600, 0.5);
   //tile4 = new Tile(this, 600, 600, 0.5);
@@ -23,10 +23,11 @@ void draw() {
 
   tile.draw();
 
-  /*
-  if(timeDelay > 20)
-    tile2.draw();
+  
+  //if(timeDelay > 20)
+    //tile2.draw();
 
+/*
   if(timeDelay > 40)
     tile3.draw();
 

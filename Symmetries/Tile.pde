@@ -54,9 +54,9 @@ class Tile {
   }
 
   void loadSVGs() {
-    base = loadShape("base.svg");
-    overlay = loadShape("overlay.svg");
-    colours = loadShape("colours.svg");
+    base = loadShape("patterns/pattern3/pencil.svg");
+    overlay = loadShape("patterns/pattern3/pen.svg");
+    colours = loadShape("patterns/pattern3/colour.svg");
 
     PENCIL_STEPS = base.getChildCount();
     PEN_STEPS =  overlay.getChildCount();
@@ -71,9 +71,10 @@ class Tile {
   void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
     pencil.setStrokeWeight(1);
-    pencil.setRoughness(0.5);
+    pencil.setRoughness(0.1);
 
     pen = HandyPresets.createMarker(reference);
+    pen.setRoughness(0.1);
   }
 
   void populateBase() {
@@ -110,8 +111,8 @@ class Tile {
     CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
 
     fill(255, 0, 0);
-    text(frameRate + "FPS", 20, 20);
-    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 40);
+    //text(frameRate + "FPS", 20, 20);
+    //text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 40);
     noFill();
   }
 

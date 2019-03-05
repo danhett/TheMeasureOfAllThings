@@ -24,7 +24,7 @@ Tile tile4;
 int timeDelay = 0;
 
 public void setup() {
-  tile = new Tile(this, width/2, height/2, 0.8f);
+  tile = new Tile(this, width/2, height/2, 0.7f);
   //tile2 = new Tile(this, 600, 200, 0.5);
   //tile3 = new Tile(this, 200, 600, 0.5);
   //tile4 = new Tile(this, 600, 600, 0.5);
@@ -41,10 +41,11 @@ public void draw() {
 
   tile.draw();
 
-  /*
-  if(timeDelay > 20)
-    tile2.draw();
+  
+  //if(timeDelay > 20)
+    //tile2.draw();
 
+/*
   if(timeDelay > 40)
     tile3.draw();
 
@@ -110,9 +111,9 @@ class Tile {
   }
 
   public void loadSVGs() {
-    base = loadShape("base.svg");
-    overlay = loadShape("overlay.svg");
-    colours = loadShape("colours.svg");
+    base = loadShape("patterns/pattern3/pencil.svg");
+    overlay = loadShape("patterns/pattern3/pen.svg");
+    colours = loadShape("patterns/pattern3/colour.svg");
 
     PENCIL_STEPS = base.getChildCount();
     PEN_STEPS =  overlay.getChildCount();
@@ -127,9 +128,10 @@ class Tile {
   public void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
     pencil.setStrokeWeight(1);
-    pencil.setRoughness(0.5f);
+    pencil.setRoughness(0.1f);
 
     pen = HandyPresets.createMarker(reference);
+    pen.setRoughness(0.1f);
   }
 
   public void populateBase() {
@@ -166,8 +168,8 @@ class Tile {
     CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / width * DRAW_STEPS);
 
     fill(255, 0, 0);
-    text(frameRate + "FPS", 20, 20);
-    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 40);
+    //text(frameRate + "FPS", 20, 20);
+    //text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 40);
     noFill();
   }
 

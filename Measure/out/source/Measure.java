@@ -50,6 +50,10 @@ public void setupConsole() {
   console.start();
 }
 
+public void mousePressed() {
+  tile.updateSketch();
+}
+
 public void draw() {
   background(255);
 
@@ -91,6 +95,9 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
+  int current = 1;
+  int max = 3;
+
   PGraphics surface;
   PGraphics pg;
 
@@ -130,14 +137,18 @@ class Tile {
     pg = createGraphics(800, 800);
     surface = createGraphics(width, height);
 
-    loadSVGs();
     createDrawingTools();
-    populateBase();
-    populateOverlay();
+
+    loadSVGs();
   }
 
-  public void mousePressed() {
-    println("update");
+  public void updateSketch() {
+    if(current < max) 
+      current++;
+    else
+      current = 1;
+
+    loadSVGs();
   }
 
   public void updateValue(float val) {
@@ -145,15 +156,18 @@ class Tile {
   }
 
   public void loadSVGs() {
-    base = loadShape("patterns/pattern3/pencil.svg");
-    overlay = loadShape("patterns/pattern3/pen.svg");
-    colours = loadShape("patterns/pattern3/colour.svg");
+    base = loadShape("patterns/pattern" + current + "/pencil.svg");
+    overlay = loadShape("patterns/pattern" + current + "/pen.svg");
+    colours = loadShape("patterns/pattern" + current + "/colour.svg");
 
     PENCIL_STEPS = base.getChildCount();
     PEN_STEPS =  overlay.getChildCount();
     COLOUR_STEPS = colours.getChildCount();
 
     DRAW_STEPS = PENCIL_STEPS + PEN_STEPS + COLOUR_STEPS;
+
+    populateBase();
+    populateOverlay();
   }
 
   public void createDrawingTools() {
@@ -208,9 +222,13 @@ class Tile {
   }
 
   public void updateReadout() {
+    fill(255, 50, 0);
+    text("THE MEASURE OF ALL THINGS", 20, 60);
     fill(0, 0, 0);
-    text(frameRate + "FPS", 20, 60);
-    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 80);
+    text("- - - - - - - - - - - - -", 20, 80);
+    text(round(frameRate) + " fps", 20, 100);
+    text("pattern " + current + " of " + max, 20, 120);
+    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 140);
     noFill();
   }
 
@@ -228,7 +246,7 @@ class Tile {
     }
          
     for(int i = 0; i < limit; i++) {
-        pencil.setSeed(1234);
+        //pencil.setSeed(1234);
         
           int kind = pencilShapes[i].getKind();
           params = pencilShapes[i].getParams();
@@ -268,7 +286,7 @@ class Tile {
     }
 
     for(int i = 0; i < limit; i++) {
-      pen.setSeed(1234);
+      //pen.setSeed(1234);
 
       params = penShapes[i].getParams();
       

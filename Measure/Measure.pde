@@ -29,6 +29,10 @@ void setupConsole() {
   console.start();
 }
 
+void mousePressed() {
+  tile.updateSketch();
+}
+
 void draw() {
   background(255);
 

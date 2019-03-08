@@ -34,7 +34,7 @@ Boolean USE_OSC = false;
 public void setup() {
   
 
-  tile = new Tile(this, width/2, height/2, 0.9f, DEBUG_MODE);
+  tile = new Tile(this, width/2, height/2, 0.9f, DEBUG_MODE, USE_OSC);
 
   if(USE_OSC) {
     oscP5 = new OscP5(this,13000);
@@ -116,19 +116,24 @@ class Tile {
 
   Boolean finished = false;
   Boolean DEBUG_MODE = false;
+  Boolean USE_OSC = false;
 
+  int ANIM_STEP = 0;
   int CURRENT_STEP = 0;
   int DRAW_STEPS = 0;
   int PENCIL_STEPS = 0;
   int PEN_STEPS = 0;
   int COLOUR_STEPS = 0;
 
-  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
+  String animationDirection = "up";
+
+  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
     DEBUG_MODE = _debug;
+    USE_OSC = _osc;
 
     noFill();
     noStroke();
@@ -138,15 +143,6 @@ class Tile {
     surface = createGraphics(width, height);
 
     createDrawingTools();
-
-    loadSVGs();
-  }
-
-  public void updateSketch() {
-    if(current < max) 
-      current++;
-    else
-      current = 1;
 
     loadSVGs();
   }
@@ -168,6 +164,15 @@ class Tile {
 
     populateBase();
     populateOverlay();
+  }
+
+  public void updateSketch() {
+    if(current < max) 
+      current++;
+    else
+      current = 1;
+
+    loadSVGs();
   }
 
   public void createDrawingTools() {
@@ -215,10 +220,36 @@ class Tile {
     
     image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
 
-    CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / width * DRAW_STEPS);
+    if(!USE_OSC && frameCount % 2 == 0)
+      calculateAnimation();
 
     if(DEBUG_MODE)
       updateReadout();
+  }
+
+  public void calculateAnimation() {
+    if(animationDirection == "up") {
+      if(ANIM_STEP < (DRAW_STEPS-1)) {
+        ANIM_STEP++;
+      }
+      else  {
+        animationDirection = "down";
+      }
+    }
+    else {
+      if(ANIM_STEP > 0) {
+        ANIM_STEP--;
+      }
+      else {
+        updateSketch();
+        animationDirection = "up";
+      }
+    }
+
+    CURRENT_STEP = ANIM_STEP;
+    
+    // mouse testing
+    //CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
   }
 
   public void updateReadout() {
@@ -246,7 +277,7 @@ class Tile {
     }
          
     for(int i = 0; i < limit; i++) {
-        //pencil.setSeed(1234);
+        pencil.setSeed(1234);
         
           int kind = pencilShapes[i].getKind();
           params = pencilShapes[i].getParams();
@@ -286,7 +317,7 @@ class Tile {
     }
 
     for(int i = 0; i < limit; i++) {
-      //pen.setSeed(1234);
+      pen.setSeed(1234);
 
       params = penShapes[i].getParams();
       

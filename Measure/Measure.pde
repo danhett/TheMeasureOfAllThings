@@ -13,7 +13,7 @@ Boolean USE_OSC = false;
 void setup() {
   fullScreen(P2D);
 
-  tile = new Tile(this, width/2, height/2, 0.9, DEBUG_MODE);
+  tile = new Tile(this, width/2, height/2, 0.9, DEBUG_MODE, USE_OSC);
 
   if(USE_OSC) {
     oscP5 = new OscP5(this,13000);

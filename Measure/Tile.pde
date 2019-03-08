@@ -42,19 +42,24 @@ class Tile {
 
   Boolean finished = false;
   Boolean DEBUG_MODE = false;
+  Boolean USE_OSC = false;
 
+  int ANIM_STEP = 0;
   int CURRENT_STEP = 0;
   int DRAW_STEPS = 0;
   int PENCIL_STEPS = 0;
   int PEN_STEPS = 0;
   int COLOUR_STEPS = 0;
 
-  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
+  String animationDirection = "up";
+
+  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
     DEBUG_MODE = _debug;
+    USE_OSC = _osc;
 
     noFill();
     noStroke();
@@ -64,15 +69,6 @@ class Tile {
     surface = createGraphics(width, height);
 
     createDrawingTools();
-
-    loadSVGs();
-  }
-
-  void updateSketch() {
-    if(current < max) 
-      current++;
-    else
-      current = 1;
 
     loadSVGs();
   }
@@ -94,6 +90,15 @@ class Tile {
 
     populateBase();
     populateOverlay();
+  }
+
+  void updateSketch() {
+    if(current < max) 
+      current++;
+    else
+      current = 1;
+
+    loadSVGs();
   }
 
   void createDrawingTools() {
@@ -141,10 +146,36 @@ class Tile {
     
     image(surface, xPos - (width*0.5), yPos - (height*0.5));
 
-    CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
+    if(!USE_OSC && frameCount % 2 == 0)
+      calculateAnimation();
 
     if(DEBUG_MODE)
       updateReadout();
+  }
+
+  void calculateAnimation() {
+    if(animationDirection == "up") {
+      if(ANIM_STEP < (DRAW_STEPS-1)) {
+        ANIM_STEP++;
+      }
+      else  {
+        animationDirection = "down";
+      }
+    }
+    else {
+      if(ANIM_STEP > 0) {
+        ANIM_STEP--;
+      }
+      else {
+        updateSketch();
+        animationDirection = "up";
+      }
+    }
+
+    CURRENT_STEP = ANIM_STEP;
+    
+    // mouse testing
+    //CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
   }
 
   void updateReadout() {

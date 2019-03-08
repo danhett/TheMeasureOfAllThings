@@ -79,6 +79,7 @@ class Tile {
     pencil.setRoughness(0.1);
 
     pen = HandyPresets.createMarker(reference);
+    pen.setGraphics(surface);
     pen.setRoughness(0.1);
   }
 
@@ -106,9 +107,20 @@ class Tile {
     tint(255, 255);
 
     drawColours();
+
+    surface.beginDraw();
+    surface.noFill();
+    surface.clear();
+    surface.ellipseMode(CORNER);
+    surface.translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
+
     drawBase();
     drawOverlay();
+
+    surface.endDraw();
     
+    image(surface, xPos - (width*0.5), yPos - (height*0.5));
+
     updateReadout();
   }
 
@@ -132,22 +144,12 @@ BASE
   void drawBase() {
     pencilmaxSteps = pencilShapes.length;
 
-    pushMatrix();
-
-   // translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
-
     int limit = pencilmaxSteps;
 
     if(CURRENT_STEP < pencilmaxSteps) {
       limit = CURRENT_STEP;
     }
          
-    surface.beginDraw();
-    surface.noFill();
-    surface.clear();
-    surface.ellipseMode(CORNER);
-    //surface.pushMatrix();
-    surface.translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
     for(int i = 0; i < limit; i++) {
         pencil.setSeed(1234);
         
@@ -171,12 +173,6 @@ BASE
             );
         }  
     }
-    //surface.popMatrix();
-    surface.endDraw();
-
-    popMatrix();
-
-    image(surface, xPos - (width*0.5), yPos - (height*0.5));
   }
 
 /*
@@ -188,10 +184,6 @@ OVERLAY
   int maxSteps;
   void drawOverlay() {
     maxSteps = penShapes.length;
-
-    pushMatrix();
-
-    translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
     int limit = PEN_STEPS;
 
@@ -214,8 +206,6 @@ OVERLAY
         params[3] * scaleFactor
       );
     }
-
-    popMatrix();
   }
 
 /*
@@ -231,16 +221,7 @@ COLOURS
     pushMatrix();
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
-    //if(canDraw) {
       scale(scaleFactor, scaleFactor);
-
-      /*
-      if (shapecurrentTime < shapetimer) {
-        shapecurrentTime++;
-      } else {
-        shapecurrentTime = 0;
-      }
-      */
 
       int limit = PEN_STEPS+PENCIL_STEPS;
 

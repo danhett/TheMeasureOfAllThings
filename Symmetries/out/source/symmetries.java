@@ -28,9 +28,9 @@ NetAddress myRemoteLocation;
 
 public void setup() {
   tile = new Tile(this, width/2, height/2, 0.9f);
-  
+  //size(1024, 768);
   //frameRate(60);
-  //fullScreen();
+  
   //oscP5 = new OscP5(this,13000);
   //myRemoteLocation = new NetAddress("127.0.0.1",12000);
 }
@@ -127,6 +127,7 @@ class Tile {
     pencil.setRoughness(0.1f);
 
     pen = HandyPresets.createMarker(reference);
+    pen.setGraphics(surface);
     pen.setRoughness(0.1f);
   }
 
@@ -154,9 +155,20 @@ class Tile {
     tint(255, 255);
 
     drawColours();
+
+    surface.beginDraw();
+    surface.noFill();
+    surface.clear();
+    surface.ellipseMode(CORNER);
+    surface.translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
+
     drawBase();
     drawOverlay();
+
+    surface.endDraw();
     
+    image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
+
     updateReadout();
   }
 
@@ -180,22 +192,12 @@ BASE
   public void drawBase() {
     pencilmaxSteps = pencilShapes.length;
 
-    pushMatrix();
-
-   // translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
-
     int limit = pencilmaxSteps;
 
     if(CURRENT_STEP < pencilmaxSteps) {
       limit = CURRENT_STEP;
     }
          
-    surface.beginDraw();
-    surface.noFill();
-    surface.clear();
-    surface.ellipseMode(CORNER);
-    //surface.pushMatrix();
-    surface.translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
     for(int i = 0; i < limit; i++) {
         pencil.setSeed(1234);
         
@@ -219,12 +221,6 @@ BASE
             );
         }  
     }
-    //surface.popMatrix();
-    surface.endDraw();
-
-    popMatrix();
-
-    image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
   }
 
 /*
@@ -236,10 +232,6 @@ OVERLAY
   int maxSteps;
   public void drawOverlay() {
     maxSteps = penShapes.length;
-
-    pushMatrix();
-
-    translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
     int limit = PEN_STEPS;
 
@@ -262,8 +254,6 @@ OVERLAY
         params[3] * scaleFactor
       );
     }
-
-    popMatrix();
   }
 
 /*
@@ -279,16 +269,7 @@ COLOURS
     pushMatrix();
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
-    //if(canDraw) {
       scale(scaleFactor, scaleFactor);
-
-      /*
-      if (shapecurrentTime < shapetimer) {
-        shapecurrentTime++;
-      } else {
-        shapecurrentTime = 0;
-      }
-      */
 
       int limit = PEN_STEPS+PENCIL_STEPS;
 
@@ -313,7 +294,7 @@ COLOURS
     popMatrix();
   }
 }
-  public void settings() {  size(1024, 768); }
+  public void settings() {  fullScreen(); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Symmetries" };
     if (passedArgs != null) {

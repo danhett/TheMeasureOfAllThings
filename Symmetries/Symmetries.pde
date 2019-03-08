@@ -8,9 +8,9 @@ NetAddress myRemoteLocation;
 
 void setup() {
   tile = new Tile(this, width/2, height/2, 0.9);
-  size(1024, 768);
+  //size(1024, 768);
   //frameRate(60);
-  //fullScreen();
+  fullScreen();
   //oscP5 = new OscP5(this,13000);
   //myRemoteLocation = new NetAddress("127.0.0.1",12000);
 }

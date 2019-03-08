@@ -1,11 +1,17 @@
 import org.gicentre.handy.*;
 
 class Tile {
+  Symmetries reference;
   HandyRenderer pencil;
   HandyRenderer pen;
   PShape base;
   PShape overlay;
   PShape colours;
+
+  int xPos;
+  int yPos;
+  float scaleFactor;
+  float[] params;
 
   PShape[] pencilShapes;
   PShape[] penShapes;
@@ -18,27 +24,34 @@ class Tile {
   PGraphics surface;
   PGraphics pg;
 
-  //Boolean canDraw = false;
+  int penciltimer = 2;
+  int pencilcurrentTime = 0;
+  int pencilcurrentSteps = 0;
+  int pencilmaxSteps;
+  int timer = 2;
+  int currentTime = 0;
+  int currentSteps = -30;
+  int maxSteps;
+  int shapetimer = 2;
+  int shapecurrentTime = 0;
+  int shapecurrentSteps = 0;
+  int shapemaxSteps;
+
   Boolean finished = false;
+  Boolean DEBUG_MODE = false;
 
   int CURRENT_STEP = 0;
   int DRAW_STEPS = 0;
-
   int PENCIL_STEPS = 0;
   int PEN_STEPS = 0;
   int COLOUR_STEPS = 0;
 
-  Symmetries reference;
-  int xPos;
-  int yPos;
-  float scaleFactor;
-  float[] params;
-
-  Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor) {
+  Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
+    DEBUG_MODE = _debug;
 
     noFill();
     noStroke();
@@ -47,12 +60,14 @@ class Tile {
     pg = createGraphics(800, 800);
     surface = createGraphics(width, height);
 
-    paper =loadImage("paper.jpg");
-
     loadSVGs();
     createDrawingTools();
     populateBase();
     populateOverlay();
+  }
+
+  void mousePressed() {
+    println("update");
   }
 
   void updateValue(float val) {
@@ -70,7 +85,6 @@ class Tile {
 
     DRAW_STEPS = PENCIL_STEPS + PEN_STEPS + COLOUR_STEPS;
   }
-
 
   void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
@@ -102,10 +116,6 @@ class Tile {
   }
 
   void draw() {
-    tint(255, 100);
-    image(paper, 0, 0);
-    tint(255, 255);
-
     drawColours();
 
     surface.beginDraw();
@@ -121,26 +131,23 @@ class Tile {
     
     image(surface, xPos - (width*0.5), yPos - (height*0.5));
 
-    updateReadout();
+    CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
+
+    if(DEBUG_MODE)
+      updateReadout();
   }
 
   void updateReadout() {
-    CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
-
-    fill(255, 0, 0);
+    fill(0, 0, 0);
     text(frameRate + "FPS", 20, 60);
     text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 80);
     noFill();
   }
 
 
-/*
-BASE
-*/
-  int penciltimer = 2;
-  int pencilcurrentTime = 0;
-  int pencilcurrentSteps = 0;
-  int pencilmaxSteps;
+  /**
+   * PENCIL
+   */
   void drawBase() {
     pencilmaxSteps = pencilShapes.length;
 
@@ -175,13 +182,9 @@ BASE
     }
   }
 
-/*
-OVERLAY
-*/
-  int timer = 2;
-  int currentTime = 0;
-  int currentSteps = -30;
-  int maxSteps;
+  /**
+   * PEN
+   */
   void drawOverlay() {
     maxSteps = penShapes.length;
 
@@ -208,40 +211,36 @@ OVERLAY
     }
   }
 
-/*
-COLOURS
-*/
-  int shapetimer = 2;
-  int shapecurrentTime = 0;
-  int shapecurrentSteps = 0;
-  int shapemaxSteps;
+  /**
+   * COLOURS
+   */  
   void drawColours() {
     shapemaxSteps = colours.getChildCount();
 
     pushMatrix();
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
-      scale(scaleFactor, scaleFactor);
+    scale(scaleFactor, scaleFactor);
 
-      int limit = PEN_STEPS+PENCIL_STEPS;
+    int limit = PEN_STEPS+PENCIL_STEPS;
 
-      if(CURRENT_STEP > (PENCIL_STEPS+PEN_STEPS) && CURRENT_STEP < (PENCIL_STEPS+PEN_STEPS) + COLOUR_STEPS) {
-        limit = CURRENT_STEP - PENCIL_STEPS - PEN_STEPS;
+    if(CURRENT_STEP > (PENCIL_STEPS+PEN_STEPS) && CURRENT_STEP < (PENCIL_STEPS+PEN_STEPS) + COLOUR_STEPS) {
+      limit = CURRENT_STEP - PENCIL_STEPS - PEN_STEPS;
+    }
+    else if(CURRENT_STEP < PEN_STEPS + PENCIL_STEPS + 1){
+      limit = 0;
+    }
+
+    if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
+      pg.beginDraw();
+      pg.clear();
+      for(int i = 0; i <= limit; i++) {
+        pg.shape(colours.getChild(i), 0, 0); 
       }
-      else if(CURRENT_STEP < PEN_STEPS + PENCIL_STEPS + 1){
-        limit = 0;
-      }
+      pg.endDraw();
 
-      if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
-        pg.beginDraw();
-        pg.clear();
-        for(int i = 0; i <= limit; i++) {
-          pg.shape(colours.getChild(i), 0, 0); 
-        }
-        pg.endDraw();
-
-        image(pg, 0, 0);
-      }
+      image(pg, 0, 0);
+    }
 
     popMatrix();
   }

@@ -3,6 +3,7 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
+import at.mukprojects.console.*; 
 import oscP5.*; 
 import netP5.*; 
 import org.gicentre.handy.*; 
@@ -18,42 +19,69 @@ import java.io.IOException;
 
 public class Symmetries extends PApplet {
 
-Tile tile;
 
 
 
   
 OscP5 oscP5;
 NetAddress myRemoteLocation;
+Tile tile;
+Console console;
+
+Boolean DEBUG_MODE = false;
+Boolean USE_OSC = false;
 
 public void setup() {
-  tile = new Tile(this, width/2, height/2, 0.9f);
-  //size(1024, 768);
-  //frameRate(60);
   
-  //oscP5 = new OscP5(this,13000);
-  //myRemoteLocation = new NetAddress("127.0.0.1",12000);
+
+  tile = new Tile(this, width/2, height/2, 0.9f, DEBUG_MODE);
+
+  if(USE_OSC) {
+    oscP5 = new OscP5(this,13000);
+    myRemoteLocation = new NetAddress("127.0.0.1",12000);
+  }
+
+  if(DEBUG_MODE) 
+    setupConsole();
 }
 
+public void setupConsole() {
+  console = new Console(this);
+  console.start();
+}
 
 public void draw() {
   background(255);
 
   tile.draw();
+
+  if(DEBUG_MODE) 
+    drawConsole();
 }
 
-/* incoming osc message are forwarded to the oscEvent method. */
+public void drawConsole() {
+  console.draw();  
+  console.print();
+}
+
 public void oscEvent(OscMessage theOscMessage) {
-  //tile.updateValue(theOscMessage.get(0).floatValue());
+  if(USE_OSC)
+    tile.updateValue(theOscMessage.get(0).floatValue());
 }
 
 
 class Tile {
+  Symmetries reference;
   HandyRenderer pencil;
   HandyRenderer pen;
   PShape base;
   PShape overlay;
   PShape colours;
+
+  int xPos;
+  int yPos;
+  float scaleFactor;
+  float[] params;
 
   PShape[] pencilShapes;
   PShape[] penShapes;
@@ -66,27 +94,34 @@ class Tile {
   PGraphics surface;
   PGraphics pg;
 
-  //Boolean canDraw = false;
+  int penciltimer = 2;
+  int pencilcurrentTime = 0;
+  int pencilcurrentSteps = 0;
+  int pencilmaxSteps;
+  int timer = 2;
+  int currentTime = 0;
+  int currentSteps = -30;
+  int maxSteps;
+  int shapetimer = 2;
+  int shapecurrentTime = 0;
+  int shapecurrentSteps = 0;
+  int shapemaxSteps;
+
   Boolean finished = false;
+  Boolean DEBUG_MODE = false;
 
   int CURRENT_STEP = 0;
   int DRAW_STEPS = 0;
-
   int PENCIL_STEPS = 0;
   int PEN_STEPS = 0;
   int COLOUR_STEPS = 0;
 
-  Symmetries reference;
-  int xPos;
-  int yPos;
-  float scaleFactor;
-  float[] params;
-
-  Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor) {
+  Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
+    DEBUG_MODE = _debug;
 
     noFill();
     noStroke();
@@ -95,12 +130,14 @@ class Tile {
     pg = createGraphics(800, 800);
     surface = createGraphics(width, height);
 
-    paper =loadImage("paper.jpg");
-
     loadSVGs();
     createDrawingTools();
     populateBase();
     populateOverlay();
+  }
+
+  public void mousePressed() {
+    println("update");
   }
 
   public void updateValue(float val) {
@@ -118,7 +155,6 @@ class Tile {
 
     DRAW_STEPS = PENCIL_STEPS + PEN_STEPS + COLOUR_STEPS;
   }
-
 
   public void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
@@ -150,10 +186,6 @@ class Tile {
   }
 
   public void draw() {
-    tint(255, 100);
-    image(paper, 0, 0);
-    tint(255, 255);
-
     drawColours();
 
     surface.beginDraw();
@@ -169,26 +201,23 @@ class Tile {
     
     image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
 
-    updateReadout();
+    CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / width * DRAW_STEPS);
+
+    if(DEBUG_MODE)
+      updateReadout();
   }
 
   public void updateReadout() {
-    CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / width * DRAW_STEPS);
-
-    fill(255, 0, 0);
+    fill(0, 0, 0);
     text(frameRate + "FPS", 20, 60);
     text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 80);
     noFill();
   }
 
 
-/*
-BASE
-*/
-  int penciltimer = 2;
-  int pencilcurrentTime = 0;
-  int pencilcurrentSteps = 0;
-  int pencilmaxSteps;
+  /**
+   * PENCIL
+   */
   public void drawBase() {
     pencilmaxSteps = pencilShapes.length;
 
@@ -223,13 +252,9 @@ BASE
     }
   }
 
-/*
-OVERLAY
-*/
-  int timer = 2;
-  int currentTime = 0;
-  int currentSteps = -30;
-  int maxSteps;
+  /**
+   * PEN
+   */
   public void drawOverlay() {
     maxSteps = penShapes.length;
 
@@ -256,45 +281,41 @@ OVERLAY
     }
   }
 
-/*
-COLOURS
-*/
-  int shapetimer = 2;
-  int shapecurrentTime = 0;
-  int shapecurrentSteps = 0;
-  int shapemaxSteps;
+  /**
+   * COLOURS
+   */  
   public void drawColours() {
     shapemaxSteps = colours.getChildCount();
 
     pushMatrix();
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
-      scale(scaleFactor, scaleFactor);
+    scale(scaleFactor, scaleFactor);
 
-      int limit = PEN_STEPS+PENCIL_STEPS;
+    int limit = PEN_STEPS+PENCIL_STEPS;
 
-      if(CURRENT_STEP > (PENCIL_STEPS+PEN_STEPS) && CURRENT_STEP < (PENCIL_STEPS+PEN_STEPS) + COLOUR_STEPS) {
-        limit = CURRENT_STEP - PENCIL_STEPS - PEN_STEPS;
+    if(CURRENT_STEP > (PENCIL_STEPS+PEN_STEPS) && CURRENT_STEP < (PENCIL_STEPS+PEN_STEPS) + COLOUR_STEPS) {
+      limit = CURRENT_STEP - PENCIL_STEPS - PEN_STEPS;
+    }
+    else if(CURRENT_STEP < PEN_STEPS + PENCIL_STEPS + 1){
+      limit = 0;
+    }
+
+    if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
+      pg.beginDraw();
+      pg.clear();
+      for(int i = 0; i <= limit; i++) {
+        pg.shape(colours.getChild(i), 0, 0); 
       }
-      else if(CURRENT_STEP < PEN_STEPS + PENCIL_STEPS + 1){
-        limit = 0;
-      }
+      pg.endDraw();
 
-      if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
-        pg.beginDraw();
-        pg.clear();
-        for(int i = 0; i <= limit; i++) {
-          pg.shape(colours.getChild(i), 0, 0); 
-        }
-        pg.endDraw();
-
-        image(pg, 0, 0);
-      }
+      image(pg, 0, 0);
+    }
 
     popMatrix();
   }
 }
-  public void settings() {  fullScreen(); }
+  public void settings() {  fullScreen(P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Symmetries" };
     if (passedArgs != null) {

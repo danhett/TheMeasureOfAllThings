@@ -1,7 +1,7 @@
 import org.gicentre.handy.*;
 
 class Tile {
-  Symmetries reference;
+  Measure reference;
   HandyRenderer pencil;
   HandyRenderer pen;
   PShape base;
@@ -46,7 +46,7 @@ class Tile {
   int PEN_STEPS = 0;
   int COLOUR_STEPS = 0;
 
-  Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
+  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;

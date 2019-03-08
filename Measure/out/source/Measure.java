@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream; 
 import java.io.IOException; 
 
-public class Symmetries extends PApplet {
+public class Measure extends PApplet {
 
 
 
@@ -28,7 +28,7 @@ NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 
-Boolean DEBUG_MODE = false;
+Boolean DEBUG_MODE = true;
 Boolean USE_OSC = false;
 
 public void setup() {
@@ -71,7 +71,7 @@ public void oscEvent(OscMessage theOscMessage) {
 
 
 class Tile {
-  Symmetries reference;
+  Measure reference;
   HandyRenderer pencil;
   HandyRenderer pen;
   PShape base;
@@ -116,7 +116,7 @@ class Tile {
   int PEN_STEPS = 0;
   int COLOUR_STEPS = 0;
 
-  Tile(Symmetries ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
+  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
@@ -317,7 +317,7 @@ class Tile {
 }
   public void settings() {  fullScreen(P2D); }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "Symmetries" };
+    String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {

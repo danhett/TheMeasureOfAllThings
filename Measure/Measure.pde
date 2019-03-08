@@ -7,7 +7,7 @@ NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 
-Boolean DEBUG_MODE = false;
+Boolean DEBUG_MODE = true;
 Boolean USE_OSC = false;
 
 void setup() {

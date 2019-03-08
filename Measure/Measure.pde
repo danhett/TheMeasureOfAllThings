@@ -8,7 +8,7 @@ Tile tile;
 Console console;
 
 Boolean DEBUG_MODE = true;
-Boolean USE_OSC = false;
+Boolean USE_OSC = true;
 
 void setup() {
   fullScreen(P2D);

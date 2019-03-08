@@ -29,7 +29,7 @@ Tile tile;
 Console console;
 
 Boolean DEBUG_MODE = true;
-Boolean USE_OSC = false;
+Boolean USE_OSC = true;
 
 public void setup() {
   
@@ -222,6 +222,8 @@ class Tile {
 
     if(!USE_OSC && frameCount % 2 == 0)
       calculateAnimation();
+    else 
+      CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / width * DRAW_STEPS);
 
     if(DEBUG_MODE)
       updateReadout();
@@ -247,9 +249,6 @@ class Tile {
     }
 
     CURRENT_STEP = ANIM_STEP;
-    
-    // mouse testing
-    //CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
   }
 
   public void updateReadout() {

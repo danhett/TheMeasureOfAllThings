@@ -148,6 +148,8 @@ class Tile {
 
     if(!USE_OSC && frameCount % 2 == 0)
       calculateAnimation();
+    else 
+      CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
 
     if(DEBUG_MODE)
       updateReadout();
@@ -173,9 +175,6 @@ class Tile {
     }
 
     CURRENT_STEP = ANIM_STEP;
-    
-    // mouse testing
-    //CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
   }
 
   void updateReadout() {

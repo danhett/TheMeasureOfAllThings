@@ -15,6 +15,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
+  PGraphics surface;
   PGraphics pg;
 
   //Boolean canDraw = false;
@@ -44,6 +45,7 @@ class Tile {
     ellipseMode(CORNER);
 
     pg = createGraphics(800, 800);
+    surface = createGraphics(width, height);
 
     paper =loadImage("paper.jpg");
 
@@ -51,6 +53,10 @@ class Tile {
     createDrawingTools();
     populateBase();
     populateOverlay();
+  }
+
+  void updateValue(float val) {
+    CURRENT_STEP = int(val * DRAW_STEPS);
   }
 
   void loadSVGs() {
@@ -63,13 +69,12 @@ class Tile {
     COLOUR_STEPS = colours.getChildCount();
 
     DRAW_STEPS = PENCIL_STEPS + PEN_STEPS + COLOUR_STEPS;
-
-    println(DRAW_STEPS);
   }
 
 
   void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
+    pencil.setGraphics(surface);
     pencil.setStrokeWeight(1);
     pencil.setRoughness(0.1);
 
@@ -111,8 +116,8 @@ class Tile {
     CURRENT_STEP = int(float(mouseX) / width * DRAW_STEPS);
 
     fill(255, 0, 0);
-    //text(frameRate + "FPS", 20, 20);
-    //text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 40);
+    text(frameRate + "FPS", 20, 60);
+    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 80);
     noFill();
   }
 
@@ -129,26 +134,20 @@ BASE
 
     pushMatrix();
 
-    translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
-
-    /*
-    if (pencilcurrentTime < penciltimer) {
-      pencilcurrentTime++;
-    } else {
-      pencilcurrentTime = 0;
-
-      if (pencilcurrentSteps < pencilmaxSteps) {     
-        pencilcurrentSteps++;
-      }
-    }
-    */
+   // translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
     int limit = pencilmaxSteps;
 
     if(CURRENT_STEP < pencilmaxSteps) {
       limit = CURRENT_STEP;
     }
-                
+         
+    surface.beginDraw();
+    surface.noFill();
+    surface.clear();
+    surface.ellipseMode(CORNER);
+    //surface.pushMatrix();
+    surface.translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
     for(int i = 0; i < limit; i++) {
         pencil.setSeed(1234);
         
@@ -172,8 +171,12 @@ BASE
             );
         }  
     }
+    //surface.popMatrix();
+    surface.endDraw();
 
     popMatrix();
+
+    image(surface, xPos - (width*0.5), yPos - (height*0.5));
   }
 
 /*
@@ -189,22 +192,6 @@ OVERLAY
     pushMatrix();
 
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
-
-    /*
-    if (currentTime < timer) {
-      currentTime++;
-    } 
-    else {
-      currentTime = 0;
-
-      if (currentSteps < maxSteps) {     
-        currentSteps++;
-      }
-      else {
-        canDraw = true;
-      }
-    }
-    */
 
     int limit = PEN_STEPS;
 

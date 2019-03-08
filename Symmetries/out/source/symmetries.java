@@ -3,6 +3,8 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
+import oscP5.*; 
+import netP5.*; 
 import org.gicentre.handy.*; 
 
 import java.util.HashMap; 
@@ -17,22 +19,20 @@ import java.io.IOException;
 public class Symmetries extends PApplet {
 
 Tile tile;
-Tile tile2;
-Tile tile3;
-Tile tile4;
 
-int timeDelay = 0;
 
-public void setup() {
-  tile = new Tile(this, width/2, height/2, 0.7f);
-  //tile2 = new Tile(this, 600, 200, 0.5);
-  //tile3 = new Tile(this, 200, 600, 0.5);
-  //tile4 = new Tile(this, 600, 600, 0.5);
 
   
-  frameRate(60);
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+
+public void setup() {
+  tile = new Tile(this, width/2, height/2, 0.9f);
+  
+  //frameRate(60);
   //fullScreen();
-  //smooth();
+  //oscP5 = new OscP5(this,13000);
+  //myRemoteLocation = new NetAddress("127.0.0.1",12000);
 }
 
 
@@ -40,20 +40,11 @@ public void draw() {
   background(255);
 
   tile.draw();
+}
 
-  
-  //if(timeDelay > 20)
-    //tile2.draw();
-
-/*
-  if(timeDelay > 40)
-    tile3.draw();
-
-  if(timeDelay > 60)
-    tile4.draw();
-  */
-
-  timeDelay++;
+/* incoming osc message are forwarded to the oscEvent method. */
+public void oscEvent(OscMessage theOscMessage) {
+  //tile.updateValue(theOscMessage.get(0).floatValue());
 }
 
 
@@ -72,6 +63,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
+  PGraphics surface;
   PGraphics pg;
 
   //Boolean canDraw = false;
@@ -101,6 +93,7 @@ class Tile {
     ellipseMode(CORNER);
 
     pg = createGraphics(800, 800);
+    surface = createGraphics(width, height);
 
     paper =loadImage("paper.jpg");
 
@@ -108,6 +101,10 @@ class Tile {
     createDrawingTools();
     populateBase();
     populateOverlay();
+  }
+
+  public void updateValue(float val) {
+    CURRENT_STEP = PApplet.parseInt(val * DRAW_STEPS);
   }
 
   public void loadSVGs() {
@@ -120,13 +117,12 @@ class Tile {
     COLOUR_STEPS = colours.getChildCount();
 
     DRAW_STEPS = PENCIL_STEPS + PEN_STEPS + COLOUR_STEPS;
-
-    println(DRAW_STEPS);
   }
 
 
   public void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
+    pencil.setGraphics(surface);
     pencil.setStrokeWeight(1);
     pencil.setRoughness(0.1f);
 
@@ -168,8 +164,8 @@ class Tile {
     CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / width * DRAW_STEPS);
 
     fill(255, 0, 0);
-    //text(frameRate + "FPS", 20, 20);
-    //text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 40);
+    text(frameRate + "FPS", 20, 60);
+    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 80);
     noFill();
   }
 
@@ -186,26 +182,20 @@ BASE
 
     pushMatrix();
 
-    translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
-
-    /*
-    if (pencilcurrentTime < penciltimer) {
-      pencilcurrentTime++;
-    } else {
-      pencilcurrentTime = 0;
-
-      if (pencilcurrentSteps < pencilmaxSteps) {     
-        pencilcurrentSteps++;
-      }
-    }
-    */
+   // translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
 
     int limit = pencilmaxSteps;
 
     if(CURRENT_STEP < pencilmaxSteps) {
       limit = CURRENT_STEP;
     }
-                
+         
+    surface.beginDraw();
+    surface.noFill();
+    surface.clear();
+    surface.ellipseMode(CORNER);
+    //surface.pushMatrix();
+    surface.translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
     for(int i = 0; i < limit; i++) {
         pencil.setSeed(1234);
         
@@ -229,8 +219,12 @@ BASE
             );
         }  
     }
+    //surface.popMatrix();
+    surface.endDraw();
 
     popMatrix();
+
+    image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
   }
 
 /*
@@ -246,22 +240,6 @@ OVERLAY
     pushMatrix();
 
     translate(xPos - 400 * scaleFactor, yPos - 400 * scaleFactor);
-
-    /*
-    if (currentTime < timer) {
-      currentTime++;
-    } 
-    else {
-      currentTime = 0;
-
-      if (currentSteps < maxSteps) {     
-        currentSteps++;
-      }
-      else {
-        canDraw = true;
-      }
-    }
-    */
 
     int limit = PEN_STEPS;
 

@@ -1,20 +1,18 @@
 Tile tile;
-Tile tile2;
-Tile tile3;
-Tile tile4;
 
-int timeDelay = 0;
+import oscP5.*;
+import netP5.*;
+  
+OscP5 oscP5;
+NetAddress myRemoteLocation;
 
 void setup() {
-  tile = new Tile(this, width/2, height/2, 0.7);
-  //tile2 = new Tile(this, 600, 200, 0.5);
-  //tile3 = new Tile(this, 200, 600, 0.5);
-  //tile4 = new Tile(this, 600, 600, 0.5);
-
+  tile = new Tile(this, width/2, height/2, 0.9);
   size(1024, 768);
-  frameRate(60);
+  //frameRate(60);
   //fullScreen();
-  //smooth();
+  //oscP5 = new OscP5(this,13000);
+  //myRemoteLocation = new NetAddress("127.0.0.1",12000);
 }
 
 
@@ -22,18 +20,9 @@ void draw() {
   background(255);
 
   tile.draw();
+}
 
-  
-  //if(timeDelay > 20)
-    //tile2.draw();
-
-/*
-  if(timeDelay > 40)
-    tile3.draw();
-
-  if(timeDelay > 60)
-    tile4.draw();
-  */
-
-  timeDelay++;
+/* incoming osc message are forwarded to the oscEvent method. */
+void oscEvent(OscMessage theOscMessage) {
+  //tile.updateValue(theOscMessage.get(0).floatValue());
 }

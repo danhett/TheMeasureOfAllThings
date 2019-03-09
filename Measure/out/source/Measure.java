@@ -95,7 +95,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 4;
+  int current = 1;
   int max = 4;
 
   PGraphics surface;
@@ -126,6 +126,8 @@ class Tile {
   int COLOUR_STEPS = 0;
 
   String animationDirection = "up";
+
+  int halfWidth = width/2;
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
     reference = ref;
@@ -222,8 +224,13 @@ class Tile {
 
     if(!USE_OSC && frameCount % 2 == 0)
       calculateAnimation();
-    else 
-      CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / width * DRAW_STEPS);
+
+    if(mouseX < width/2) {
+      CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / halfWidth * DRAW_STEPS);
+    } 
+    else {            
+      CURRENT_STEP = DRAW_STEPS - PApplet.parseInt(PApplet.parseFloat(mouseX - halfWidth) / halfWidth * DRAW_STEPS) - 1;
+    }
 
     if(DEBUG_MODE)
       updateReadout();

@@ -28,7 +28,7 @@ NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 
-Boolean DEBUG_MODE = true;
+Boolean DEBUG_MODE = false;
 Boolean USE_OSC = true;
 
 public void setup() {
@@ -150,7 +150,8 @@ class Tile {
   }
 
   public void updateValue(float val) {
-    CURRENT_STEP = PApplet.parseInt(val * DRAW_STEPS);
+    //CURRENT_STEP = int(val * DRAW_STEPS);
+    doPositionCheck(width * val);
   }
 
   public void loadSVGs() {
@@ -225,15 +226,19 @@ class Tile {
     if(!USE_OSC && frameCount % 2 == 0)
       calculateAnimation();
 
-    if(mouseX < width/2) {
-      CURRENT_STEP = PApplet.parseInt(PApplet.parseFloat(mouseX) / halfWidth * DRAW_STEPS);
-    } 
-    else {            
-      CURRENT_STEP = DRAW_STEPS - PApplet.parseInt(PApplet.parseFloat(mouseX - halfWidth) / halfWidth * DRAW_STEPS) - 1;
-    }
+    //doPositionCheck(mouseX);
 
     if(DEBUG_MODE)
       updateReadout();
+  }
+
+  public void doPositionCheck(float input) {
+    if(input < width/2) {
+      CURRENT_STEP = PApplet.parseInt(input / halfWidth * DRAW_STEPS);
+    } 
+    else {            
+      CURRENT_STEP = DRAW_STEPS - PApplet.parseInt((input - halfWidth) / halfWidth * DRAW_STEPS) - 1;
+    }
   }
 
   public void calculateAnimation() {

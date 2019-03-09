@@ -58,6 +58,9 @@ class Tile {
   String animationDirection = "up";
 
   int halfWidth = width/2;
+  int roughness = 6;
+  float randomModifier = 0.5;
+  int mashRoughness = 100;
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
     reference = ref;
@@ -82,7 +85,7 @@ class Tile {
   }
 
   void updateValue(float val) {
-    doPositionCheck(width * val);
+    //doPositionCheck(width * val);
   }
 
   void loadSVGs() {
@@ -114,9 +117,9 @@ class Tile {
     pencil.setGraphics(surface);
     pencil.setStrokeWeight(1);
     pencil.setRoughness(0.1);
+    pencil.setUseSecondaryColour(false);
 
     pen = HandyPresets.createMarker(reference);
-    //pen.setStrokeColour(255); // okay!     
     pen.setGraphics(surface);
     pen.setRoughness(1);
   }
@@ -158,10 +161,10 @@ class Tile {
     if(!USE_OSC && frameCount % 1 == 0)
       calculateAnimation();
 
-    //doPositionCheck(mouseX);
+    doPositionCheck(mouseX);
 
     fx.render()
-    .vignette(0.5, 0.2)
+    .vignette(0.5 * randomModifier, 0.6 * randomModifier)
     .compose();
 
     if(DEBUG_MODE)
@@ -170,11 +173,15 @@ class Tile {
 
   void doPositionCheck(float input) {
     if(input < width/2) {
-      CURRENT_STEP = int(input / halfWidth * DRAW_STEPS);
+      randomModifier = 1-(input / halfWidth);
     } 
     else {            
-      CURRENT_STEP = DRAW_STEPS - int((input - halfWidth) / halfWidth * DRAW_STEPS) - 1;
+      randomModifier = ((input - halfWidth) / halfWidth);
     }
+
+    pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug
+    pen.setRoughness((randomModifier * roughness));
+    pen.setStrokeWeight(4 - (randomModifier * 4));
   }
 
   void calculateAnimation() {
@@ -224,17 +231,17 @@ class Tile {
     }
          
     for(int i = 0; i < limit; i++) {
-        pencil.setSeed(1234);
+        //pencil.setSeed(1234);
         
           int kind = pencilShapes[i].getKind();
           params = pencilShapes[i].getParams();
 
           if (kind == SVG_LINE) {
             pencil.line(
-              params[0] * scaleFactor, 
-              params[1] * scaleFactor, 
-              params[2] * scaleFactor, 
-              params[3] * scaleFactor
+              mash(params[0]) * scaleFactor, 
+              mash(params[1]) * scaleFactor, 
+              mash(params[2]) * scaleFactor, 
+              mash(params[3]) * scaleFactor
             );
           } 
           else if (kind == SVG_CIRCLE) {
@@ -264,17 +271,21 @@ class Tile {
     }
 
     for(int i = 0; i < limit; i++) {
-      pen.setSeed(1234);
+      //pen.setSeed(1234);
 
       params = penShapes[i].getParams();
       
       pen.line(
-        params[0] * scaleFactor, 
-        params[1] * scaleFactor, 
-        params[2] * scaleFactor, 
-        params[3] * scaleFactor
+        mash(params[0]) * scaleFactor, 
+        mash(params[1]) * scaleFactor, 
+        mash(params[2]) * scaleFactor, 
+        mash(params[3]) * scaleFactor
       );
     }
+  }
+
+  float mash(float in) {
+    return random(in-(mashRoughness*randomModifier), in+(mashRoughness*randomModifier));
   }
 
   /**
@@ -297,14 +308,13 @@ class Tile {
       limit = 0;
     }
 
-    //colours.disableStyle();
-
     if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
       pg.beginDraw();
       pg.clear();
-      //pg.fill(255, 0, 0, 80);
       for(int i = 0; i <= limit; i++) {
-        pg.shape(colours.getChild(i), 0, 0); 
+        if(randomModifier < 0.2) {
+          pg.shape(colours.getChild(i), 0, 0); 
+        }
       }
       pg.endDraw();
 

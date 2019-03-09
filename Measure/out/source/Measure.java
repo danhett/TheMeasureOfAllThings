@@ -35,8 +35,9 @@ Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 
 public void setup() {
-  //fullScreen(P2D);
   
+  frameRate(30);
+  //size(800,800,P2D);
 
   tile = new Tile(this, width/2, height/2, 0.9f, DEBUG_MODE, USE_OSC);
 
@@ -136,6 +137,9 @@ class Tile {
   String animationDirection = "up";
 
   int halfWidth = width/2;
+  int roughness = 6;
+  float randomModifier = 0.5f;
+  int mashRoughness = 100;
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
     reference = ref;
@@ -160,7 +164,7 @@ class Tile {
   }
 
   public void updateValue(float val) {
-    doPositionCheck(width * val);
+    //doPositionCheck(width * val);
   }
 
   public void loadSVGs() {
@@ -192,9 +196,9 @@ class Tile {
     pencil.setGraphics(surface);
     pencil.setStrokeWeight(1);
     pencil.setRoughness(0.1f);
+    pencil.setUseSecondaryColour(false);
 
     pen = HandyPresets.createMarker(reference);
-    //pen.setStrokeColour(255); // okay!     
     pen.setGraphics(surface);
     pen.setRoughness(1);
   }
@@ -236,10 +240,10 @@ class Tile {
     if(!USE_OSC && frameCount % 1 == 0)
       calculateAnimation();
 
-    //doPositionCheck(mouseX);
+    doPositionCheck(mouseX);
 
     fx.render()
-    .vignette(0.5f, 0.2f)
+    .vignette(0.5f * randomModifier, 0.6f * randomModifier)
     .compose();
 
     if(DEBUG_MODE)
@@ -248,11 +252,15 @@ class Tile {
 
   public void doPositionCheck(float input) {
     if(input < width/2) {
-      CURRENT_STEP = PApplet.parseInt(input / halfWidth * DRAW_STEPS);
+      randomModifier = 1-(input / halfWidth);
     } 
     else {            
-      CURRENT_STEP = DRAW_STEPS - PApplet.parseInt((input - halfWidth) / halfWidth * DRAW_STEPS) - 1;
+      randomModifier = ((input - halfWidth) / halfWidth);
     }
+
+    pencil.setRoughness((randomModifier * roughness) + 0.1f); // fixes circle render bug
+    pen.setRoughness((randomModifier * roughness));
+    pen.setStrokeWeight(4 - (randomModifier * 4));
   }
 
   public void calculateAnimation() {
@@ -302,17 +310,17 @@ class Tile {
     }
          
     for(int i = 0; i < limit; i++) {
-        pencil.setSeed(1234);
+        //pencil.setSeed(1234);
         
           int kind = pencilShapes[i].getKind();
           params = pencilShapes[i].getParams();
 
           if (kind == SVG_LINE) {
             pencil.line(
-              params[0] * scaleFactor, 
-              params[1] * scaleFactor, 
-              params[2] * scaleFactor, 
-              params[3] * scaleFactor
+              mash(params[0]) * scaleFactor, 
+              mash(params[1]) * scaleFactor, 
+              mash(params[2]) * scaleFactor, 
+              mash(params[3]) * scaleFactor
             );
           } 
           else if (kind == SVG_CIRCLE) {
@@ -342,17 +350,21 @@ class Tile {
     }
 
     for(int i = 0; i < limit; i++) {
-      pen.setSeed(1234);
+      //pen.setSeed(1234);
 
       params = penShapes[i].getParams();
       
       pen.line(
-        params[0] * scaleFactor, 
-        params[1] * scaleFactor, 
-        params[2] * scaleFactor, 
-        params[3] * scaleFactor
+        mash(params[0]) * scaleFactor, 
+        mash(params[1]) * scaleFactor, 
+        mash(params[2]) * scaleFactor, 
+        mash(params[3]) * scaleFactor
       );
     }
+  }
+
+  public float mash(float in) {
+    return random(in-(mashRoughness*randomModifier), in+(mashRoughness*randomModifier));
   }
 
   /**
@@ -375,14 +387,13 @@ class Tile {
       limit = 0;
     }
 
-    //colours.disableStyle();
-
     if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
       pg.beginDraw();
       pg.clear();
-      //pg.fill(255, 0, 0, 80);
       for(int i = 0; i <= limit; i++) {
-        pg.shape(colours.getChild(i), 0, 0); 
+        if(randomModifier < 0.2f) {
+          pg.shape(colours.getChild(i), 0, 0); 
+        }
       }
       pg.endDraw();
 
@@ -392,7 +403,7 @@ class Tile {
     popMatrix();
   }
 }
-  public void settings() {  size(800,800,P2D); }
+  public void settings() {  fullScreen(P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {

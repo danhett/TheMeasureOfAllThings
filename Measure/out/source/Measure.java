@@ -7,6 +7,9 @@ import at.mukprojects.console.*;
 import oscP5.*; 
 import netP5.*; 
 import org.gicentre.handy.*; 
+import ch.bildspur.postfx.builder.*; 
+import ch.bildspur.postfx.pass.*; 
+import ch.bildspur.postfx.*; 
 
 import java.util.HashMap; 
 import java.util.ArrayList; 
@@ -32,6 +35,7 @@ Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 
 public void setup() {
+  //fullScreen(P2D);
   
 
   tile = new Tile(this, width/2, height/2, 0.9f, DEBUG_MODE, USE_OSC);
@@ -55,7 +59,7 @@ public void mousePressed() {
 }
 
 public void draw() {
-  background(0);
+  background(255);
 
   tile.draw();
 
@@ -74,8 +78,12 @@ public void oscEvent(OscMessage theOscMessage) {
 }
 
 
+
+
+
 class Tile {
   Measure reference;
+  PostFX fx;
   HandyRenderer pencil;
   HandyRenderer pen;
   PShape base;
@@ -136,6 +144,8 @@ class Tile {
     scaleFactor = _scaleFactor;
     DEBUG_MODE = _debug;
     USE_OSC = _osc;
+    
+    fx = new PostFX(reference); 
 
     noFill();
     noStroke();
@@ -184,12 +194,7 @@ class Tile {
     pencil.setRoughness(0.1f);
 
     pen = HandyPresets.createMarker(reference);
-    
-    
-    //pen.setStrokeColor(255); // error
-    pen.setStrokeColour(255); // okay! 
-    
-    
+    //pen.setStrokeColour(255); // okay!     
     pen.setGraphics(surface);
     pen.setRoughness(1);
   }
@@ -228,10 +233,14 @@ class Tile {
     
     image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
 
-    if(!USE_OSC && frameCount % 2 == 0)
+    if(!USE_OSC && frameCount % 1 == 0)
       calculateAnimation();
 
     //doPositionCheck(mouseX);
+
+    fx.render()
+    .vignette(0.5f, 0.2f)
+    .compose();
 
     if(DEBUG_MODE)
       updateReadout();
@@ -383,7 +392,7 @@ class Tile {
     popMatrix();
   }
 }
-  public void settings() {  fullScreen(P2D); }
+  public void settings() {  size(800,800,P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {

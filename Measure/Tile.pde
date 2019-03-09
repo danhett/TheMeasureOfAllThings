@@ -1,7 +1,11 @@
 import org.gicentre.handy.*;
+import ch.bildspur.postfx.builder.*;
+import ch.bildspur.postfx.pass.*;
+import ch.bildspur.postfx.*;
 
 class Tile {
   Measure reference;
+  PostFX fx;
   HandyRenderer pencil;
   HandyRenderer pen;
   PShape base;
@@ -62,6 +66,8 @@ class Tile {
     scaleFactor = _scaleFactor;
     DEBUG_MODE = _debug;
     USE_OSC = _osc;
+    
+    fx = new PostFX(reference); 
 
     noFill();
     noStroke();
@@ -110,12 +116,7 @@ class Tile {
     pencil.setRoughness(0.1);
 
     pen = HandyPresets.createMarker(reference);
-    
-    
-    //pen.setStrokeColor(255); // error
-    pen.setStrokeColour(255); // okay! 
-    
-    
+    //pen.setStrokeColour(255); // okay!     
     pen.setGraphics(surface);
     pen.setRoughness(1);
   }
@@ -154,10 +155,14 @@ class Tile {
     
     image(surface, xPos - (width*0.5), yPos - (height*0.5));
 
-    if(!USE_OSC && frameCount % 2 == 0)
+    if(!USE_OSC && frameCount % 1 == 0)
       calculateAnimation();
 
     //doPositionCheck(mouseX);
+
+    fx.render()
+    .vignette(0.5, 0.2)
+    .compose();
 
     if(DEBUG_MODE)
       updateReadout();

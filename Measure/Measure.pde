@@ -11,7 +11,8 @@ Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 
 void setup() {
-  fullScreen(P2D);
+  //fullScreen(P2D);
+  size(800,800,P2D);
 
   tile = new Tile(this, width/2, height/2, 0.9, DEBUG_MODE, USE_OSC);
 
@@ -34,7 +35,7 @@ void mousePressed() {
 }
 
 void draw() {
-  background(0);
+  background(255);
 
   tile.draw();
 

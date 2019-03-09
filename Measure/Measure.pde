@@ -8,7 +8,7 @@ Tile tile;
 Console console;
 
 Boolean DEBUG_MODE = false;
-Boolean USE_OSC = true;
+Boolean USE_OSC = false; // disable this to animate automatically
 
 void setup() {
   fullScreen(P2D);
@@ -34,7 +34,7 @@ void mousePressed() {
 }
 
 void draw() {
-  background(255);
+  background(0);
 
   tile.draw();
 

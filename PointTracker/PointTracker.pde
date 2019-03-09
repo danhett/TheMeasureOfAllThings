@@ -1,19 +1,18 @@
-// Daniel Shiffman and Thomas Sanchez Lengeling
+/** ORIGINAL CODE CREDITS: **/
+// Daniel Shiffman
 // Tracking the average location beyond a given depth threshold
 // Thanks to Dan O'Sullivan
-
 // https://github.com/shiffman/OpenKinect-for-Processing
 // http://shiffman.net/p5/kinect/
 
+/** HORRIBLE MODIFICATIONS, MARCH 2019 / DAN HETT: https://github.com/danhett **/
 import org.openkinect.processing.*;
-
 import netP5.*;
 import oscP5.*;
 
 OscP5 oscP5;
 NetAddress myRemoteLocation;
-
-OscMessage myMessage;
+OscMessage signal;
 
 // The kinect stuff is happening in another class
 KinectTracker tracker;
@@ -31,28 +30,25 @@ void setup() {
 void draw() {
   background(255);
 
-  // Run the tracking analysis
-  tracker.track();
-  
-  // Show the image
+  tracker.track();  
   tracker.display();
 
-  // Let's draw the raw location
+  // raw location
   PVector v1 = tracker.getPos();
   fill(50, 100, 250, 200);
   noStroke();
   ellipse(v1.x, v1.y, 20, 20);
 
-  // Let's draw the "lerped" location
+  // "lerped" location
   PVector v2 = tracker.getLerpedPos();
   fill(100, 250, 50, 200);
   noStroke();
   ellipse(v2.x, v2.y, 20, 20);
 
   // send the lerped location over OSC
-  myMessage = new OscMessage("/x");
-  myMessage.add(v2.x / width); 
-  oscP5.send(myMessage, myRemoteLocation); 
+  signal = new OscMessage("/x");
+  signal.add(v2.x / width); 
+  oscP5.send(signal, myRemoteLocation); 
 
   // Display some info
   //int t = tracker.getThreshold();

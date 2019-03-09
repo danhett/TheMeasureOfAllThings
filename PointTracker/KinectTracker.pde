@@ -1,53 +1,39 @@
+/** ORIGINAL CODE CREDITS: **/
 // Daniel Shiffman
 // Tracking the average location beyond a given depth threshold
 // Thanks to Dan O'Sullivan
-
 // https://github.com/shiffman/OpenKinect-for-Processing
 // http://shiffman.net/p5/kinect/
 
+/** HORRIBLE MODIFICATIONS, MARCH 2019 / DAN HETT: https://github.com/danhett **/
+
 class KinectTracker {
 
-  // Depth threshold
   int threshold = 700;
-
-  // Raw location
   PVector loc;
-
-  // Interpolated location
   PVector lerpedLoc;
-
-  // Depth data
   int[] depth;
-
-  // What we'll show the user
   PImage display;
-
-  //Kinect2 class
   Kinect2 kinect2;
 
+  // new, allows zero values when nobody's there
   int trackCount = 0;
-  int trackThreshold = 100;
+  int trackThreshold = 200;
 
   KinectTracker(PApplet pa) {
-
-    //enable Kinect2
     kinect2 = new Kinect2(pa);
     kinect2.initDepth();
     kinect2.initDevice();
 
-    // Make a blank image
     display = createImage(kinect2.depthWidth, kinect2.depthHeight, RGB);
 
-    // Set up the vectors
     loc = new PVector(0, 0);
     lerpedLoc = new PVector(0, 0);
   }
 
   void track() {
-    // Get the raw depth as array of integers
     depth = kinect2.getRawDepth();
 
-    // Being overly cautious here
     if (depth == null) return;
 
     float sumX = 0;
@@ -100,21 +86,18 @@ class KinectTracker {
 
     trackCount = 0;
 
-    // Being overly cautious here
     if (depth == null || img == null) return;
 
-    // Going to rewrite the depth image to show which pixels are in threshold
-    // A lot of this is redundant, but this is just for demonstration purposes
     display.loadPixels();
     for (int x = 0; x < kinect2.depthWidth; x++) {
       for (int y = 0; y < kinect2.depthHeight; y++) {
         // mirroring image
         int offset = (kinect2.depthWidth - x - 1) + y * kinect2.depthWidth;
-        // Raw depth
+        // Draw the raw depth either way
         int rawDepth = depth[offset];
         int pix = x + y*display.width;
         if (rawDepth > 0 && rawDepth < threshold) {
-          // A highlight color instead
+          // if we're within the threshold, show a colour for visual reference
           display.pixels[pix] = color(0, 200, 50);
           trackCount++;
         } else {
@@ -124,7 +107,6 @@ class KinectTracker {
     }
     display.updatePixels();
 
-    // Draw the image
     image(display, 0, 0);
   }
 

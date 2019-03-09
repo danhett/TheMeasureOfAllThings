@@ -76,7 +76,6 @@ class Tile {
   }
 
   void updateValue(float val) {
-    //CURRENT_STEP = int(val * DRAW_STEPS);
     doPositionCheck(width * val);
   }
 
@@ -111,6 +110,12 @@ class Tile {
     pencil.setRoughness(0.1);
 
     pen = HandyPresets.createMarker(reference);
+    
+    
+    //pen.setStrokeColor(255); // error
+    pen.setStrokeColour(255); // okay! 
+    
+    
     pen.setGraphics(surface);
     pen.setRoughness(1);
   }

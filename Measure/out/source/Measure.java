@@ -29,7 +29,7 @@ Tile tile;
 Console console;
 
 Boolean DEBUG_MODE = false;
-Boolean USE_OSC = true;
+Boolean USE_OSC = false; // disable this to animate automatically
 
 public void setup() {
   
@@ -55,7 +55,7 @@ public void mousePressed() {
 }
 
 public void draw() {
-  background(255);
+  background(0);
 
   tile.draw();
 
@@ -150,7 +150,6 @@ class Tile {
   }
 
   public void updateValue(float val) {
-    //CURRENT_STEP = int(val * DRAW_STEPS);
     doPositionCheck(width * val);
   }
 
@@ -185,6 +184,12 @@ class Tile {
     pencil.setRoughness(0.1f);
 
     pen = HandyPresets.createMarker(reference);
+    
+    
+    //pen.setStrokeColor(255); // error
+    pen.setStrokeColour(255); // okay! 
+    
+    
     pen.setGraphics(surface);
     pen.setRoughness(1);
   }

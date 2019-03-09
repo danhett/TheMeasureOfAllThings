@@ -1,48 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!-- Generator: Adobe Illustrator 23.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
-	<!ENTITY ns_extend "http://ns.adobe.com/Extensibility/1.0/">
-	<!ENTITY ns_ai "http://ns.adobe.com/AdobeIllustrator/10.0/">
-	<!ENTITY ns_graphs "http://ns.adobe.com/Graphs/1.0/">
-	<!ENTITY ns_vars "http://ns.adobe.com/Variables/1.0/">
-	<!ENTITY ns_imrep "http://ns.adobe.com/ImageReplacement/1.0/">
-	<!ENTITY ns_sfw "http://ns.adobe.com/SaveForWeb/1.0/">
-	<!ENTITY ns_custom "http://ns.adobe.com/GenericCustomNamespace/1.0/">
-	<!ENTITY ns_adobe_xpath "http://ns.adobe.com/XPath/1.0/">
-]>
-<svg version="1.1" id="Layer_3" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 800 800"
-	 enable-background="new 0 0 800 800" xml:space="preserve">
-<metadata>
-	<sfw  xmlns="&ns_sfw;">
-		<slices></slices>
-		<sliceSourceBounds  bottomLeftOrigin="true" height="800" width="800" x="0.5" y="-799.5"></sliceSourceBounds>
-	</sfw>
-</metadata>
-<polyline fill="#FFB7FF" points="599.5,83.5 517.5,284.5 716.5,200.5 684.5,119.5 "/>
-<polygon fill="#FFB7FF" points="399.5,0.5 482.5,35.5 400.5,234.5 316.5,35.5 "/>
-<polygon fill="#FFB7FF" points="565.5,399.5 764.5,316.5 798.5,399.5 763.5,482.5 "/>
-<polygon fill="#FFB7FF" points="517.5,515.5 716.5,599.5 681.5,680.5 598.5,715.5 "/>
-<polygon fill="#FFB7FF" points="117.5,117.5 200.5,83.5 284.5,284.5 83.5,200.5 "/>
-<polygon fill="#FFB7FF" points="34.5,316.5 231.5,399.5 34.5,482.5 0.5,399.5 "/>
-<polygon fill="#FFB7FF" points="83.5,599.5 284.5,515.5 200.5,715.5 116.5,682.5 "/>
-<polygon fill="#FFB7FF" points="399.5,567.5 482.5,763.5 400.5,798.5 316.5,764.5 "/>
-<polygon fill="#00AAFF" points="0.5,634.5 116.5,682.5 168.5,799.5 0.5,799.5 "/>
-<polygon fill="#00AAFF" points="682.5,682.5 800.5,634.5 800.5,799.5 631.5,799.5 "/>
-<polygon fill="#00AAFF" points="0.5,0.5 168.5,0.5 115.5,117.5 0.5,165.5 "/>
-<polygon fill="#00AAFF" points="798.5,-0.5 635.5,0.5 682.5,117.5 798.5,167.5 "/>
-<polygon fill="#FBFFCC" points="284.5,284.5 369.5,316.5 400.5,234.5 432.5,316.5 517.5,284.5 482.5,359.5 565.5,399.5 482.5,434.5 
-	517.5,515.5 433.5,482.5 399.5,567.5 366.5,482.5 284.5,515.5 316.5,434.5 231.5,399.5 316.5,364.5 "/>
-<polygon fill="#FF7B7B" points="399.5,0.5 316.5,35.5 400.5,234.5 369.5,316.5 284.5,284.5 200.5,83.5 116.5,117.5 168.5,0.5 "/>
-<polygon fill="#FF7B7B" points="0.5,399.5 34.5,482.5 231.5,399.5 316.5,434.5 284.5,515.5 83.5,599.5 116.5,682.5 0.5,634.5 "/>
-<polygon fill="#FF7B7B" points="399.5,567.5 482.5,763.5 400.5,798.5 631.5,799.5 682.5,682.5 598.5,715.5 517.5,515.5 433.5,482.5 
-	"/>
-<polygon fill="#FF7B7B" points="518.5,284.5 717.5,200.5 683.5,117.5 799.5,167.5 799.5,399.5 765.5,316.5 566.5,399.5 483.5,364.5 
-	"/>
-<polygon fill="#CFFFCF" points="400.5,0.5 482.5,35.5 400.5,234.5 434.5,316.5 517.5,284.5 599.5,83.5 682.5,117.5 635.5,0.5 "/>
-<polygon fill="#CFFFCF" points="565.5,399.5 761.5,482.5 798.5,400.5 799.5,634.5 681.5,682.5 717.5,599.5 517.5,515.5 482.5,434.5 
-	"/>
-<polygon fill="#CFFFCF" points="200.5,715.5 284.5,515.5 367.5,482.5 399.5,567.5 316.5,764.5 399.5,798.5 168.5,798.5 116.5,682.5 
-	"/>
-<polygon fill="#CFFFCF" points="0.5,165.5 116.5,117.5 83.5,200.5 284.5,284.5 317.5,364.5 231.5,399.5 34.5,316.5 0.5,400.5 "/>
+<svg version="1.1" id="Layer_3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
+<polyline style="fill:#FF00FF;" points="599.5,83.5 517.5,284.5 716.5,200.5 684.5,119.5 "/>
+<polygon style="fill:#FF00FF;" points="399.5,0.5 482.5,35.5 400.5,234.5 316.5,35.5 "/>
+<polygon style="fill:#FF00FF;" points="565.5,399.5 764.5,316.5 798.5,399.5 763.5,482.5 "/>
+<polygon style="fill:#FF00FF;" points="517.5,515.5 716.5,599.5 681.5,680.5 598.5,715.5 "/>
+<polygon style="fill:#FF00FF;" points="117.5,117.5 200.5,83.5 284.5,284.5 83.5,200.5 "/>
+<polygon style="fill:#FF00FF;" points="34.5,316.5 231.5,399.5 34.5,482.5 0.5,399.5 "/>
+<polygon style="fill:#FF00FF;" points="83.5,599.5 284.5,515.5 200.5,715.5 116.5,682.5 "/>
+<polygon style="fill:#FF00FF;" points="399.5,567.5 482.5,763.5 400.5,798.5 316.5,764.5 "/>
+<polygon style="fill:#00FFFF;" points="0.5,634.5 116.5,682.5 168.5,799.5 0.5,799.5 "/>
+<polygon style="fill:#00FFFF;" points="682.5,682.5 800.5,634.5 800.5,799.5 631.5,799.5 "/>
+<polygon style="fill:#00FFFF;" points="0.5,0.5 168.5,0.5 115.5,117.5 0.5,165.5 "/>
+<polygon style="fill:#00FFFF;" points="798.5,-0.5 635.5,0.5 682.5,117.5 798.5,167.5 "/>
+<polygon style="fill:#F9FF00;" points="284.5,284.5 369.5,316.5 400.5,234.5 432.5,316.5 517.5,284.5 482.5,359.5 565.5,399.5 
+	482.5,434.5 517.5,515.5 433.5,482.5 399.5,567.5 366.5,482.5 284.5,515.5 316.5,434.5 231.5,399.5 316.5,364.5 "/>
+<polygon style="fill:#00FF00;" points="399.5,0.5 316.5,35.5 400.5,234.5 369.5,316.5 284.5,284.5 200.5,83.5 116.5,117.5 
+	168.5,0.5 "/>
+<polygon style="fill:#FF0000;" points="0.5,399.5 34.5,482.5 231.5,399.5 316.5,434.5 284.5,515.5 83.5,599.5 116.5,682.5 
+	0.5,634.5 "/>
+<polygon style="fill:#00FF00;" points="399.5,567.5 482.5,763.5 400.5,798.5 631.5,799.5 682.5,682.5 598.5,715.5 517.5,515.5 
+	433.5,482.5 "/>
+<polygon style="fill:#FF0000;" points="518.5,284.5 717.5,200.5 683.5,117.5 799.5,167.5 799.5,399.5 765.5,316.5 566.5,399.5 
+	483.5,364.5 "/>
+<polygon style="fill:#00FF00;" points="400.5,0.5 482.5,35.5 400.5,234.5 434.5,316.5 517.5,284.5 599.5,83.5 682.5,117.5 
+	635.5,0.5 "/>
+<polygon style="fill:#FF0000;" points="565.5,399.5 761.5,482.5 798.5,400.5 799.5,634.5 681.5,682.5 717.5,599.5 517.5,515.5 
+	482.5,434.5 "/>
+<polygon style="fill:#00FF00;" points="200.5,715.5 284.5,515.5 367.5,482.5 399.5,567.5 316.5,764.5 399.5,798.5 168.5,798.5 
+	116.5,682.5 "/>
+<polygon style="fill:#FF0000;" points="0.5,165.5 116.5,117.5 83.5,200.5 284.5,284.5 317.5,364.5 231.5,399.5 34.5,316.5 
+	0.5,400.5 "/>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
 </svg>

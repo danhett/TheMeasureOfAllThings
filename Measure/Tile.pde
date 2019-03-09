@@ -21,8 +21,8 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 1;
-  int max = 3;
+  int current = 4;
+  int max = 4;
 
   PGraphics surface;
   PGraphics pg;
@@ -109,7 +109,7 @@ class Tile {
 
     pen = HandyPresets.createMarker(reference);
     pen.setGraphics(surface);
-    pen.setRoughness(0.1);
+    pen.setRoughness(1);
   }
 
   void populateBase() {
@@ -275,9 +275,12 @@ class Tile {
       limit = 0;
     }
 
+    //colours.disableStyle();
+
     if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
       pg.beginDraw();
       pg.clear();
+      //pg.fill(255, 0, 0, 80);
       for(int i = 0; i <= limit; i++) {
         pg.shape(colours.getChild(i), 0, 0); 
       }

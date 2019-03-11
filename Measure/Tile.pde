@@ -25,7 +25,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 4;
+  int current = 1;
   int max = 5;
 
   PGraphics surface;
@@ -61,6 +61,9 @@ class Tile {
   int roughness = 6;
   float randomModifier = 0.5;
   int mashRoughness = 100;
+
+  int holdCount = 0;
+  int holdThreshold = 150; // frames to keep the final design on for
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
     reference = ref;
@@ -191,7 +194,13 @@ class Tile {
         ANIM_STEP++;
       }
       else  {
-        animationDirection = "down";
+        if(holdCount < holdThreshold) {
+          holdCount++;
+        }
+        else {
+          holdCount = 0;
+          animationDirection = "down";
+        }
       }
     }
     else {
@@ -314,13 +323,16 @@ class Tile {
       pg.beginDraw();
       pg.clear();
       for(int i = 0; i <= limit; i++) {
-        if(randomModifier < 0.2) {
+          pg.pushMatrix();
+          pg.translate(mash(0) * 2, mash(0) * 2);
           pg.shape(colours.getChild(i), 0, 0); 
-        }
+          pg.popMatrix();
       }
       pg.endDraw();
 
+      tint(255, 255 - (200 * randomModifier));
       image(pg, 0, 0);
+      tint(255, 255);
     }
 
     popMatrix();

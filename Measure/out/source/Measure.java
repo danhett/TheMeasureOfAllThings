@@ -22,6 +22,18 @@ import java.io.IOException;
 
 public class Measure extends PApplet {
 
+/**
+ * THE MEASURE OF ALL THING
+ * Dan Hett (hellodanhett@gmail.com)
+ *
+ * TODO
+ * - colour selection per patterns
+ * - dead zone in the middle of the detection space
+ * - inverse colour mode with a switch
+ * - colour shape distortion instead of switch off
+ * - full Kinect test
+ * - full Magic Leap test
+ */
 
 
 
@@ -35,9 +47,11 @@ Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 
 public void setup() {
-  
+  //fullScreen(P2D);
   frameRate(30);
-  //size(800,800,P2D);
+  
+
+  surface.setTitle("THE MEASURE OF ALL THINGS");
 
   tile = new Tile(this, width/2, height/2, 0.9f, DEBUG_MODE, USE_OSC);
 
@@ -104,7 +118,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 4;
+  int current = 1;
   int max = 5;
 
   PGraphics surface;
@@ -140,6 +154,9 @@ class Tile {
   int roughness = 6;
   float randomModifier = 0.5f;
   int mashRoughness = 100;
+
+  int holdCount = 0;
+  int holdThreshold = 100;
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
     reference = ref;
@@ -270,7 +287,13 @@ class Tile {
         ANIM_STEP++;
       }
       else  {
-        animationDirection = "down";
+        if(holdCount < holdThreshold) {
+          holdCount++;
+        }
+        else {
+          holdCount = 0;
+          animationDirection = "down";
+        }
       }
     }
     else {
@@ -393,19 +416,22 @@ class Tile {
       pg.beginDraw();
       pg.clear();
       for(int i = 0; i <= limit; i++) {
-        if(randomModifier < 0.2f) {
+          pg.pushMatrix();
+          pg.translate(mash(0) * 2, mash(0) * 2);
           pg.shape(colours.getChild(i), 0, 0); 
-        }
+          pg.popMatrix();
       }
       pg.endDraw();
 
+      tint(255, 255 - (200 * randomModifier));
       image(pg, 0, 0);
+      tint(255, 255);
     }
 
     popMatrix();
   }
 }
-  public void settings() {  fullScreen(P2D); }
+  public void settings() {  size(800,800,P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {

@@ -1,3 +1,15 @@
+/**
+ * THE MEASURE OF ALL THING
+ * Dan Hett (hellodanhett@gmail.com)
+ *
+ * TODO
+ * - colour selection per patterns
+ * - dead zone in the middle of the detection space
+ * - inverse colour mode with a switch
+ * - colour shape distortion instead of switch off
+ * - full Kinect test
+ * - full Magic Leap test
+ */
 import at.mukprojects.console.*;
 import oscP5.*;
 import netP5.*;

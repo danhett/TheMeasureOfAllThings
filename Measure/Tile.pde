@@ -25,8 +25,8 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 1;
-  int max = 4;
+  int current = 4;
+  int max = 5;
 
   PGraphics surface;
   PGraphics pg;
@@ -163,9 +163,9 @@ class Tile {
 
     doPositionCheck(mouseX);
 
-    fx.render()
-    .vignette(0.5 * randomModifier, 0.6 * randomModifier)
-    .compose();
+    //fx.render()
+    //.vignette(0.5 * randomModifier, 0.6 * randomModifier)
+    //.compose();
 
     if(DEBUG_MODE)
       updateReadout();
@@ -180,8 +180,9 @@ class Tile {
     }
 
     pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug
+    pencil.setStrokeWeight(1 - randomModifier);
     pen.setRoughness((randomModifier * roughness));
-    pen.setStrokeWeight(4 - (randomModifier * 4));
+    pen.setStrokeWeight(2 - (randomModifier * 2));
   }
 
   void calculateAnimation() {
@@ -231,7 +232,8 @@ class Tile {
     }
          
     for(int i = 0; i < limit; i++) {
-        //pencil.setSeed(1234);
+        if(frameCount % 2 == 0)
+          pencil.setSeed(1234);
         
           int kind = pencilShapes[i].getKind();
           params = pencilShapes[i].getParams();
@@ -271,7 +273,7 @@ class Tile {
     }
 
     for(int i = 0; i < limit; i++) {
-      //pen.setSeed(1234);
+      pen.setSeed(1234);
 
       params = penShapes[i].getParams();
       

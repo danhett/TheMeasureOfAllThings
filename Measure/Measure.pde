@@ -6,9 +6,6 @@
  * - colour selection per patterns
  * - dead zone in the middle of the detection space
  * - inverse colour mode with a switch
- * - colour shape distortion instead of switch off
- * - full Kinect test
- * - full Magic Leap test
  */
 import at.mukprojects.console.*;
 import oscP5.*;
@@ -21,6 +18,7 @@ Console console;
 
 Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
+Boolean INVERT_COLOURS = true;
 
 void setup() {
   //fullScreen(P2D);
@@ -29,7 +27,7 @@ void setup() {
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
-  tile = new Tile(this, width/2, height/2, 0.9, DEBUG_MODE, USE_OSC);
+  tile = new Tile(this, width/2, height/2, 0.9);
 
   if(USE_OSC) {
     oscP5 = new OscP5(this,13000);
@@ -50,7 +48,10 @@ void mousePressed() {
 }
 
 void draw() {
-  background(255);
+  if(INVERT_COLOURS)
+    background(0);
+  else
+    background(255);
 
   tile.draw();
 

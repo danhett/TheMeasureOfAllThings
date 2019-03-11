@@ -25,7 +25,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 1;
+  int current = 5;
   int max = 5;
 
   PGraphics surface;
@@ -45,8 +45,6 @@ class Tile {
   int shapemaxSteps;
 
   Boolean finished = false;
-  Boolean DEBUG_MODE = false;
-  Boolean USE_OSC = false;
 
   int ANIM_STEP = 0;
   int CURRENT_STEP = 0;
@@ -65,13 +63,11 @@ class Tile {
   int holdCount = 0;
   int holdThreshold = 150; // frames to keep the final design on for
 
-  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
+  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
-    DEBUG_MODE = _debug;
-    USE_OSC = _osc;
     
     fx = new PostFX(reference); 
 
@@ -125,6 +121,9 @@ class Tile {
     pen = HandyPresets.createMarker(reference);
     pen.setGraphics(surface);
     pen.setRoughness(1);
+
+    if(reference.INVERT_COLOURS)
+      pen.setStrokeColour(255);
   }
 
   void populateBase() {
@@ -161,7 +160,7 @@ class Tile {
     
     image(surface, xPos - (width*0.5), yPos - (height*0.5));
 
-    if(!USE_OSC && frameCount % 1 == 0)
+    if(!reference.USE_OSC && frameCount % 1 == 0)
       calculateAnimation();
 
     doPositionCheck(mouseX);
@@ -170,7 +169,7 @@ class Tile {
     //.vignette(0.5 * randomModifier, 0.6 * randomModifier)
     //.compose();
 
-    if(DEBUG_MODE)
+    if(reference.DEBUG_MODE)
       updateReadout();
   }
 

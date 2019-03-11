@@ -30,9 +30,6 @@ public class Measure extends PApplet {
  * - colour selection per patterns
  * - dead zone in the middle of the detection space
  * - inverse colour mode with a switch
- * - colour shape distortion instead of switch off
- * - full Kinect test
- * - full Magic Leap test
  */
 
 
@@ -45,6 +42,7 @@ Console console;
 
 Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
+Boolean INVERT_COLOURS = true;
 
 public void setup() {
   //fullScreen(P2D);
@@ -53,7 +51,7 @@ public void setup() {
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
-  tile = new Tile(this, width/2, height/2, 0.9f, DEBUG_MODE, USE_OSC);
+  tile = new Tile(this, width/2, height/2, 0.9f);
 
   if(USE_OSC) {
     oscP5 = new OscP5(this,13000);
@@ -74,7 +72,10 @@ public void mousePressed() {
 }
 
 public void draw() {
-  background(255);
+  if(INVERT_COLOURS)
+    background(0);
+  else
+    background(255);
 
   tile.draw();
 
@@ -118,7 +119,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 1;
+  int current = 5;
   int max = 5;
 
   PGraphics surface;
@@ -138,8 +139,6 @@ class Tile {
   int shapemaxSteps;
 
   Boolean finished = false;
-  Boolean DEBUG_MODE = false;
-  Boolean USE_OSC = false;
 
   int ANIM_STEP = 0;
   int CURRENT_STEP = 0;
@@ -156,15 +155,13 @@ class Tile {
   int mashRoughness = 100;
 
   int holdCount = 0;
-  int holdThreshold = 100;
+  int holdThreshold = 150; // frames to keep the final design on for
 
-  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor, Boolean _debug, Boolean _osc) {
+  Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor) {
     reference = ref;
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
-    DEBUG_MODE = _debug;
-    USE_OSC = _osc;
     
     fx = new PostFX(reference); 
 
@@ -218,6 +215,9 @@ class Tile {
     pen = HandyPresets.createMarker(reference);
     pen.setGraphics(surface);
     pen.setRoughness(1);
+
+    if(reference.INVERT_COLOURS)
+      pen.setStrokeColour(255);
   }
 
   public void populateBase() {
@@ -254,7 +254,7 @@ class Tile {
     
     image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
 
-    if(!USE_OSC && frameCount % 1 == 0)
+    if(!reference.USE_OSC && frameCount % 1 == 0)
       calculateAnimation();
 
     doPositionCheck(mouseX);
@@ -263,7 +263,7 @@ class Tile {
     //.vignette(0.5 * randomModifier, 0.6 * randomModifier)
     //.compose();
 
-    if(DEBUG_MODE)
+    if(reference.DEBUG_MODE)
       updateReadout();
   }
 

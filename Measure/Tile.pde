@@ -321,11 +321,16 @@ class Tile {
     if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
       pg.beginDraw();
       pg.clear();
-      for(int i = 0; i <= limit; i++) {
-          pg.pushMatrix();
-          pg.translate(mash(0) * 2, mash(0) * 2);
-          pg.shape(colours.getChild(i), 0, 0); 
-          pg.popMatrix();
+      for(int i = 0; i <= limit; i++) {  
+          try {
+            pg.pushMatrix();
+            pg.translate(mash(0) * 2, mash(0) * 2);
+            pg.shape(colours.getChild(i), 0, 0); 
+            pg.popMatrix();
+          }
+          catch(NullPointerException e)  {
+            // nom nom nom 
+          }
       }
       pg.endDraw();
 

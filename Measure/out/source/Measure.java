@@ -29,7 +29,8 @@ public class Measure extends PApplet {
  * TODO
  * - colour selection per patterns
  * - dead zone in the middle of the detection space
- * - inverse colour mode with a switch
+ * - fix nullpointer issues (line 327 in Tile.pde)
+ * - kill the speed
  */
 
 
@@ -42,11 +43,11 @@ Console console;
 
 Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
-Boolean INVERT_COLOURS = true;
+Boolean INVERT_COLOURS = false; // set to true for black background with white lines
 
 public void setup() {
   //fullScreen(P2D);
-  frameRate(30);
+  frameRate(60);
   
 
   surface.setTitle("THE MEASURE OF ALL THINGS");

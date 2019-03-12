@@ -67,6 +67,18 @@ class Tile {
     {#262e69, #44a5be, #15624c, #8b7350, #bca99d},
     {#cb6149, #ce642e, #b19077, #f3e5be, #613839},
     {#e2a6a6, #4abed3, #228f9c, #c52353, #ffddb5},
+    {#7ab191, #35334b, #dfa834, #e8d7bb, #f9caa5},
+    {#ffefe4, #a38976, #c92027, #0d886d, #414da0},
+    {#d5d2c9, #63beb7, #989dc3, #283679, #9f5d3d},
+    {#ced2db, #cda32c, #2e56a6, #49aa7c, #965924},
+    {#05698f, #0382a6, #49896b, #d1aa49, #699097},
+    {#f04f3c, #8180bd, #f1e8e1, #ffd79e, #3b5233},
+    {#efe8de, #bc892c, #272a6b, #ca2127, #7c3d21},
+    {#6b83b4, #56a57e, #b5976a, #27326f, #fef5f9},
+    {#5481ae, #e45625, #f16577, #0e2917, #ede8eb},
+    {#b76728, #40617a, #eebf39, #c5cad8, #d46b34},
+    {#e6e5e1, #a66227, #2c2c2e, #c8ae90, #a67e3f},
+    {#017ea9, #2d2b71, #e9e1cc, #44999b, #0989ae}
   };
 
   color found1, found2, found3, found4, found5;

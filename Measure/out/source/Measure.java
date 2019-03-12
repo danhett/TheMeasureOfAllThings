@@ -43,7 +43,7 @@ Console console;
 
 Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
-Boolean INVERT_COLOURS = false; // set to true for black background with white lines
+Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 public void setup() {
@@ -121,7 +121,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 1;
+  int current = 4;
   int max = 5;
 
   PGraphics surface;
@@ -177,7 +177,10 @@ class Tile {
     {0xff017ea9, 0xff2d2b71, 0xffe9e1cc, 0xff44999b, 0xff0989ae}
   };
 
-  int found1, found2, found3, found4, found5;
+  // input colours from the artwork
+  int found1, found2, found3, found4, found5, found6, found7, found8, found9, found10;
+  
+  // output colours
   int col1, col2, col3, col4, col5;
 
   int[] colsTempList = { col1, col2, col3, col4, col5};
@@ -484,6 +487,17 @@ class Tile {
    * COLOUR SELECTION
    */
   public void updateColourSelection() {
+    found1 = 0xff000000;
+    found2 = 0xff000000;
+    found3 = 0xff000000;
+    found4 = 0xff000000;
+    found5 = 0xff000000;
+    found6 = 0xff000000;
+    found7 = 0xff000000;
+    found8 = 0xff000000;
+    found9 = 0xff000000;
+    found10 = 0xff000000;
+
     int rand = PApplet.parseInt(random(cols.length));
     col1 = cols[rand][0];
     col2 = cols[rand][1];
@@ -498,8 +512,23 @@ class Tile {
     colsTempList[4] = col5;
   }
 
+  int returnColour;
+
+  // TODO: this is fucking horrible, make not horrible
   public int getCorrectColour(int inCol) {
-    return colsTempList[PApplet.parseInt(random(colsTempList.length))];
+    if(found1 == 0xff000000 || found1 == inCol) { found1 = inCol; return col1; }
+    if(found2 == 0xff000000 || found2 == inCol) { found2 = inCol; return col2; }
+    if(found3 == 0xff000000 || found3 == inCol) { found3 = inCol; return col3; }
+    if(found4 == 0xff000000 || found4 == inCol) { found4 = inCol; return col4; }
+    if(found5 == 0xff000000 || found5 == inCol) { found5 = inCol; return col5; }
+    if(found6 == 0xff000000 || found6 == inCol) { found6 = inCol; return col1; }
+    if(found7 == 0xff000000 || found7 == inCol) { found7 = inCol; return col2; }
+    if(found8 == 0xff000000 || found8 == inCol) { found8 = inCol; return col3; }
+    if(found9 == 0xff000000 || found9 == inCol) { found9 = inCol; return col4; }
+    if(found10 == 0xff000000 || found10 == inCol) { found10 = inCol; return col5; }
+
+    return 0xffFF0000;
+    //return colsTempList[int(random(colsTempList.length))];
   }
 
   public int getPShapeFillColor(final PShape sh) {

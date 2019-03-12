@@ -19,7 +19,7 @@ Console console;
 
 Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
-Boolean INVERT_COLOURS = false; // set to true for black background with white lines
+Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 void setup() {

@@ -61,9 +61,8 @@
 <polygon style="fill:#00B9E7;" points="654,654 747,600 748,663 800,689 741,727 694,800 661,747 601,747 "/>
 <polygon style="fill:#00B9E7;" points="54,599 146,651 200,747 139,746 108,801 65,736 -2,693 54,663 "/>
 <polygon style="fill:#00B9E7;" points="68,63 109,0 137,54 200,54 146,146 53,199 54,137 -2,106 "/>
-<polygon style="fill:#004DE7;" points="735,67 692,0 799,0 800,108 "/>
-<polygon style="fill:#004DE7;" points="744,727 800,689 799,801 694,800 "/>
-<polygon style="fill:#004DE7;" points="65,736 108,801 0,800 -2,693 "/>
-<polygon style="fill:#004DE7;" points="-1,0 109,0 68,63 -2,106 "/>
-
+<polygon style="fill:#DDA4FF;" points="735,67 692,0 799,0 800,108 "/>
+<polygon style="fill:#DDA4FF;" points="744,727 800,689 799,801 694,800 "/>
+<polygon style="fill:#DDA4FF;" points="65,736 108,801 0,800 -2,693 "/>
+<polygon style="fill:#DDA4FF;" points="-1,0 109,0 68,63 -2,106 "/>
 </svg>

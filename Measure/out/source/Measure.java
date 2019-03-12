@@ -29,8 +29,8 @@ public class Measure extends PApplet {
  * TODO
  * - colour selection per patterns
  * - dead zone in the middle of the detection space
- * - fix nullpointer issues (line 327 in Tile.pde)
- * - kill the speed
+ * - fix colour handling in the main class
+ * - nice thick line handling on some of them??
  */
 
 
@@ -44,10 +44,11 @@ Console console;
 Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = false; // set to true for black background with white lines
+Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 public void setup() {
   //fullScreen(P2D);
-  frameRate(60);
+  frameRate(30);
   
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
@@ -120,7 +121,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 5;
+  int current = 1;
   int max = 5;
 
   PGraphics surface;
@@ -158,6 +159,17 @@ class Tile {
   int holdCount = 0;
   int holdThreshold = 150; // frames to keep the final design on for
 
+   int[][] cols = { 
+    {0xff262e69, 0xff44a5be, 0xff15624c, 0xff8b7350, 0xffbca99d},
+    {0xffcb6149, 0xffce642e, 0xffb19077, 0xfff3e5be, 0xff613839},
+    {0xffe2a6a6, 0xff4abed3, 0xff228f9c, 0xffc52353, 0xffffddb5},
+  };
+
+  int found1, found2, found3, found4, found5;
+  int col1, col2, col3, col4, col5;
+
+  int[] colsTempList = { col1, col2, col3, col4, col5};
+
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor) {
     reference = ref;
     xPos = _xPos;
@@ -183,6 +195,8 @@ class Tile {
   }
 
   public void loadSVGs() {
+    updateColourSelection();
+
     base = loadShape("patterns/pattern" + current + "/pencil.svg");
     overlay = loadShape("patterns/pattern" + current + "/pen.svg");
     colours = loadShape("patterns/pattern" + current + "/colour.svg");
@@ -394,8 +408,10 @@ class Tile {
   }
 
   /**
-   * COLOURS
+   * DRAW COLOURS
    */  
+
+  PShape drawShape; 
   public void drawColours() {
     shapemaxSteps = colours.getChildCount();
 
@@ -413,14 +429,34 @@ class Tile {
       limit = 0;
     }
 
+    if(reference.USE_CODE_COLOURS)
+      colours.disableStyle();
+
     if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
       pg.beginDraw();
       pg.clear();
-      for(int i = 0; i <= limit; i++) {
-          pg.pushMatrix();
-          pg.translate(mash(0) * 2, mash(0) * 2);
-          pg.shape(colours.getChild(i), 0, 0); 
-          pg.popMatrix();
+      pg.noStroke();
+      for(int i = 0; i <= limit; i++) {  
+          try {
+            pg.pushMatrix();
+            pg.translate(mash(0) * 2, mash(0) * 2);
+
+            // make the PShape
+            drawShape = colours.getChild(i);
+            
+            // if needed, re-colour it
+            if(reference.USE_CODE_COLOURS) {
+              pg.fill(getCorrectColour(getPShapeFillColor(drawShape)));
+            }
+            
+            // draw the sucker
+            pg.shape(drawShape, 0, 0);
+            
+            pg.popMatrix();
+          }
+          catch(NullPointerException e)  {
+            // nom nom nom 
+          }
       }
       pg.endDraw();
 
@@ -430,6 +466,42 @@ class Tile {
     }
 
     popMatrix();
+  }
+
+  /** 
+   * COLOUR SELECTION
+   */
+  public void updateColourSelection() {
+    int rand = PApplet.parseInt(random(cols.length));
+    col1 = cols[rand][0];
+    col2 = cols[rand][1];
+    col3 = cols[rand][2];
+    col4 = cols[rand][3];
+    col5 = cols[rand][4];
+
+    colsTempList[0] = col1;
+    colsTempList[1] = col2;
+    colsTempList[2] = col3;
+    colsTempList[3] = col4;
+    colsTempList[4] = col5;
+  }
+
+  public int getCorrectColour(int inCol) {
+    return colsTempList[PApplet.parseInt(random(colsTempList.length))];
+  }
+
+  public int getPShapeFillColor(final PShape sh) {
+    try {
+      final java.lang.reflect.Field f = 
+        PShape.class.getDeclaredField("fillColor");
+  
+      f.setAccessible(true);
+      return f.getInt(sh);
+    }
+ 
+    catch (ReflectiveOperationException cause) {
+      throw new RuntimeException(cause);
+    }
   }
 }
   public void settings() {  size(800,800,P2D); }

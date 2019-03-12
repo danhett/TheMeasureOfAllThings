@@ -5,7 +5,8 @@
  * TODO
  * - colour selection per patterns
  * - dead zone in the middle of the detection space
- * - fix nullpointer issues (line 327 in Tile.pde)
+ * - fix colour handling in the main class
+ * - nice thick line handling on some of them??
  */
 import at.mukprojects.console.*;
 import oscP5.*;
@@ -19,6 +20,7 @@ Console console;
 Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = false; // set to true for black background with white lines
+Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 void setup() {
   //fullScreen(P2D);

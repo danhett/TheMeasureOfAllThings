@@ -25,7 +25,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 5;
+  int current = 1;
   int max = 5;
 
   PGraphics surface;
@@ -63,6 +63,17 @@ class Tile {
   int holdCount = 0;
   int holdThreshold = 150; // frames to keep the final design on for
 
+   color[][] cols = { 
+    {#262e69, #44a5be, #15624c, #8b7350, #bca99d},
+    {#cb6149, #ce642e, #b19077, #f3e5be, #613839},
+    {#e2a6a6, #4abed3, #228f9c, #c52353, #ffddb5},
+  };
+
+  color found1, found2, found3, found4, found5;
+  color col1, col2, col3, col4, col5;
+
+  color[] colsTempList = { col1, col2, col3, col4, col5};
+
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor) {
     reference = ref;
     xPos = _xPos;
@@ -88,6 +99,8 @@ class Tile {
   }
 
   void loadSVGs() {
+    updateColourSelection();
+
     base = loadShape("patterns/pattern" + current + "/pencil.svg");
     overlay = loadShape("patterns/pattern" + current + "/pen.svg");
     colours = loadShape("patterns/pattern" + current + "/colour.svg");
@@ -299,8 +312,10 @@ class Tile {
   }
 
   /**
-   * COLOURS
+   * DRAW COLOURS
    */  
+
+  PShape drawShape; 
   void drawColours() {
     shapemaxSteps = colours.getChildCount();
 
@@ -318,14 +333,29 @@ class Tile {
       limit = 0;
     }
 
+    if(reference.USE_CODE_COLOURS)
+      colours.disableStyle();
+
     if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
       pg.beginDraw();
       pg.clear();
+      pg.noStroke();
       for(int i = 0; i <= limit; i++) {  
           try {
             pg.pushMatrix();
             pg.translate(mash(0) * 2, mash(0) * 2);
-            pg.shape(colours.getChild(i), 0, 0); 
+
+            // make the PShape
+            drawShape = colours.getChild(i);
+            
+            // if needed, re-colour it
+            if(reference.USE_CODE_COLOURS) {
+              pg.fill(getCorrectColour(getPShapeFillColor(drawShape)));
+            }
+            
+            // draw the sucker
+            pg.shape(drawShape, 0, 0);
+            
             pg.popMatrix();
           }
           catch(NullPointerException e)  {
@@ -340,5 +370,41 @@ class Tile {
     }
 
     popMatrix();
+  }
+
+  /** 
+   * COLOUR SELECTION
+   */
+  void updateColourSelection() {
+    int rand = int(random(cols.length));
+    col1 = cols[rand][0];
+    col2 = cols[rand][1];
+    col3 = cols[rand][2];
+    col4 = cols[rand][3];
+    col5 = cols[rand][4];
+
+    colsTempList[0] = col1;
+    colsTempList[1] = col2;
+    colsTempList[2] = col3;
+    colsTempList[3] = col4;
+    colsTempList[4] = col5;
+  }
+
+  color getCorrectColour(color inCol) {
+    return colsTempList[int(random(colsTempList.length))];
+  }
+
+  color getPShapeFillColor(final PShape sh) {
+    try {
+      final java.lang.reflect.Field f = 
+        PShape.class.getDeclaredField("fillColor");
+  
+      f.setAccessible(true);
+      return f.getInt(sh);
+    }
+ 
+    catch (ReflectiveOperationException cause) {
+      throw new RuntimeException(cause);
+    }
   }
 }

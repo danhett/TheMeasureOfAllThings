@@ -23,9 +23,9 @@ Boolean INVERT_COLOURS = true; // set to true for black background with white li
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 void setup() {
-  //fullScreen(P2D);
+  fullScreen(P2D);
   frameRate(30);
-  size(800,800,P2D);
+  //size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 

@@ -25,8 +25,8 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 4;
-  int max = 5;
+  int current = 1;
+  int max = 8;
 
   PGraphics surface;
   PGraphics pg;

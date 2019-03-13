@@ -47,9 +47,9 @@ Boolean INVERT_COLOURS = true; // set to true for black background with white li
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 public void setup() {
-  //fullScreen(P2D);
-  frameRate(30);
   
+  frameRate(30);
+  //size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
@@ -121,8 +121,8 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 4;
-  int max = 5;
+  int current = 8;
+  int max = 8;
 
   PGraphics surface;
   PGraphics pg;
@@ -545,7 +545,7 @@ class Tile {
     }
   }
 }
-  public void settings() {  size(800,800,P2D); }
+  public void settings() {  fullScreen(P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {

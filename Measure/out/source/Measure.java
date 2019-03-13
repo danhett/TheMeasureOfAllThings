@@ -40,10 +40,13 @@ OscP5 oscP5;
 NetAddress myRemoteLocation;
 Tile tile;
 Console console;
+float rectSize = 800;
+float scaleFactor = 1.1f;
+float realRectSize = rectSize * scaleFactor;
 
-Boolean DEBUG_MODE = false;
+Boolean DEBUG_MODE = true;
 Boolean USE_OSC = false; // disable this to animate automatically
-Boolean INVERT_COLOURS = true; // set to true for black background with white lines
+Boolean INVERT_COLOURS = false; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 public void setup() {
@@ -53,7 +56,7 @@ public void setup() {
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
-  tile = new Tile(this, width/2, height/2, 0.9f);
+  tile = new Tile(this, width/2, height/2, scaleFactor);
 
   if(USE_OSC) {
     oscP5 = new OscP5(this,13000);
@@ -78,6 +81,12 @@ public void draw() {
     background(0);
   else
     background(255);
+
+  if(DEBUG_MODE) {
+    noFill();
+    stroke(255, 0, 0);
+    rect(width / 2 - realRectSize / 2, height / 2 - realRectSize / 2, rectSize * scaleFactor, rectSize * scaleFactor);
+  }
 
   tile.draw();
 
@@ -121,7 +130,7 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 8;
+  int current = 1;
   int max = 8;
 
   PGraphics surface;
@@ -342,7 +351,12 @@ class Tile {
   public void updateReadout() {
     fill(255, 50, 0);
     text("THE MEASURE OF ALL THINGS", 20, 60);
-    fill(0, 0, 0);
+    
+    if(reference.INVERT_COLOURS)
+      fill(255, 255, 255);
+    else 
+      fill(0, 0, 0);
+    
     text("- - - - - - - - - - - - -", 20, 80);
     text(round(frameRate) + " fps", 20, 100);
     text("pattern " + current + " of " + max, 20, 120);

@@ -246,7 +246,12 @@ class Tile {
   void updateReadout() {
     fill(255, 50, 0);
     text("THE MEASURE OF ALL THINGS", 20, 60);
-    fill(0, 0, 0);
+    
+    if(reference.INVERT_COLOURS)
+      fill(255, 255, 255);
+    else 
+      fill(0, 0, 0);
+    
     text("- - - - - - - - - - - - -", 20, 80);
     text(round(frameRate) + " fps", 20, 100);
     text("pattern " + current + " of " + max, 20, 120);

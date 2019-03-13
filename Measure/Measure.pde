@@ -4,9 +4,8 @@
  *
  * TODO
  * - colour selection per patterns
- * - dead zone in the middle of the detection space
+ * - dead zone in the middle of the detection space (TAKE FROM INPUT SOURCE)
  * - fix colour handling in the main class
- * - nice thick line handling on some of them??
  */
 import at.mukprojects.console.*;
 import oscP5.*;

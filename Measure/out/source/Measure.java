@@ -28,9 +28,8 @@ public class Measure extends PApplet {
  *
  * TODO
  * - colour selection per patterns
- * - dead zone in the middle of the detection space
+ * - dead zone in the middle of the detection space (TAKE FROM INPUT SOURCE)
  * - fix colour handling in the main class
- * - nice thick line handling on some of them??
  */
 
 
@@ -41,27 +40,26 @@ NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 float rectSize = 800;
-float scaleFactor = 1.1f;
+float scaleFactor = 0.8f;
 float realRectSize = rectSize * scaleFactor;
 
-Boolean DEBUG_MODE = true;
+Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
+String INTERACTION_MODE = "wobble"; // "wobble" or "timeline" 
+
+Boolean hasDoneOSCGrossHack = false;
+
 public void setup() {
-  
+  //fullScreen(P2D);
   frameRate(30);
-  //size(800,800,P2D);
+  
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
   tile = new Tile(this, width/2, height/2, scaleFactor);
-
-  if(USE_OSC) {
-    oscP5 = new OscP5(this,13000);
-    myRemoteLocation = new NetAddress("127.0.0.1",12000);
-  }
 
   if(DEBUG_MODE) 
     setupConsole();
@@ -77,6 +75,16 @@ public void mousePressed() {
 }
 
 public void draw() {
+  
+  // do this here once, as it blocks the main thread in setup() and causes a crash
+  if(USE_OSC) {
+      if(!hasDoneOSCGrossHack) {
+      hasDoneOSCGrossHack = true;
+      oscP5 = new OscP5(this,13000);
+      myRemoteLocation = new NetAddress("127.0.0.1",12000);
+    }
+  }
+
   if(INVERT_COLOURS)
     background(0);
   else
@@ -100,8 +108,9 @@ public void drawConsole() {
 }
 
 public void oscEvent(OscMessage theOscMessage) {
-  if(USE_OSC)
+  if(USE_OSC) {
     tile.updateValue(theOscMessage.get(0).floatValue());
+  }
 }
 
 
@@ -162,7 +171,7 @@ class Tile {
 
   int halfWidth = width/2;
   int roughness = 6;
-  float randomModifier = 0.5f;
+  float randomModifier = 0;
   int mashRoughness = 100;
 
   int holdCount = 0;
@@ -215,7 +224,7 @@ class Tile {
   }
 
   public void updateValue(float val) {
-    //doPositionCheck(width * val);
+    doPositionCheck(width * val);
   }
 
   public void loadSVGs() {
@@ -293,10 +302,13 @@ class Tile {
     
     image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
 
-    if(!reference.USE_OSC && frameCount % 1 == 0)
+    if(reference.INTERACTION_MODE == "wobble")
       calculateAnimation();
 
-    doPositionCheck(mouseX);
+    if(!reference.USE_OSC) 
+      doPositionCheck(mouseX); // input here
+    //else
+      //doPositionCheck(mouseX);
 
     //fx.render()
     //.vignette(0.5 * randomModifier, 0.6 * randomModifier)
@@ -314,10 +326,23 @@ class Tile {
       randomModifier = ((input - halfWidth) / halfWidth);
     }
 
-    pencil.setRoughness((randomModifier * roughness) + 0.1f); // fixes circle render bug
-    pencil.setStrokeWeight(1 - randomModifier);
-    pen.setRoughness((randomModifier * roughness));
-    pen.setStrokeWeight(2 - (randomModifier * 2));
+    if(reference.INTERACTION_MODE == "wobble") {
+      pencil.setRoughness((randomModifier * roughness) + 0.1f); // fixes circle render bug
+      pencil.setStrokeWeight(1 - randomModifier);
+      pen.setRoughness((randomModifier * roughness));
+      pen.setStrokeWeight(2 - (randomModifier * 2));
+    }
+
+    if(reference.INTERACTION_MODE == "timeline") {
+      //println(int(DRAW_STEPS * randomModifier));
+      
+      try {
+        CURRENT_STEP = DRAW_STEPS - PApplet.parseInt(DRAW_STEPS * randomModifier);
+      }
+      catch(Exception e)  {
+        // nom nom nom 
+      }
+    }
   }
 
   public void calculateAnimation() {
@@ -433,6 +458,9 @@ class Tile {
   }
 
   public float mash(float in) {
+    if(reference.INTERACTION_MODE == "timeline")
+      return in;
+
     return random(in-(mashRoughness*randomModifier), in+(mashRoughness*randomModifier));
   }
 
@@ -483,7 +511,7 @@ class Tile {
             
             pg.popMatrix();
           }
-          catch(NullPointerException e)  {
+          catch(Exception e)  {
             // nom nom nom 
           }
       }
@@ -559,7 +587,7 @@ class Tile {
     }
   }
 }
-  public void settings() {  fullScreen(P2D); }
+  public void settings() {  size(800,800,P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {

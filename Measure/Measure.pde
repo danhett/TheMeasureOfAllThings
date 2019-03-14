@@ -16,27 +16,26 @@ NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 float rectSize = 800;
-float scaleFactor = 1.1;
+float scaleFactor = 0.8;
 float realRectSize = rectSize * scaleFactor;
 
-Boolean DEBUG_MODE = true;
+Boolean DEBUG_MODE = false;
 Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
+String INTERACTION_MODE = "wobble"; // "wobble" or "timeline" 
+
+Boolean hasDoneOSCGrossHack = false;
+
 void setup() {
-  fullScreen(P2D);
+  //fullScreen(P2D);
   frameRate(30);
-  //size(800,800,P2D);
+  size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
   tile = new Tile(this, width/2, height/2, scaleFactor);
-
-  if(USE_OSC) {
-    oscP5 = new OscP5(this,13000);
-    myRemoteLocation = new NetAddress("127.0.0.1",12000);
-  }
 
   if(DEBUG_MODE) 
     setupConsole();
@@ -52,6 +51,16 @@ void mousePressed() {
 }
 
 void draw() {
+  
+  // do this here once, as it blocks the main thread in setup() and causes a crash
+  if(USE_OSC) {
+      if(!hasDoneOSCGrossHack) {
+      hasDoneOSCGrossHack = true;
+      oscP5 = new OscP5(this,13000);
+      myRemoteLocation = new NetAddress("127.0.0.1",12000);
+    }
+  }
+
   if(INVERT_COLOURS)
     background(0);
   else
@@ -75,6 +84,7 @@ void drawConsole() {
 }
 
 void oscEvent(OscMessage theOscMessage) {
-  if(USE_OSC)
+  if(USE_OSC) {
     tile.updateValue(theOscMessage.get(0).floatValue());
+  }
 }

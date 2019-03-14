@@ -48,14 +48,14 @@ Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
-String INTERACTION_MODE = "wobble"; // "wobble" or "timeline" 
+String INTERACTION_MODE = "timeline"; // "wobble" or "timeline" 
 
 Boolean hasDoneOSCGrossHack = false;
 
 public void setup() {
-  //fullScreen(P2D);
-  frameRate(30);
   
+  frameRate(30);
+  //size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
@@ -587,7 +587,7 @@ class Tile {
     }
   }
 }
-  public void settings() {  size(800,800,P2D); }
+  public void settings() {  fullScreen(P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {

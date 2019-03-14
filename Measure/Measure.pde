@@ -29,9 +29,9 @@ String INTERACTION_MODE = "wobble"; // "wobble" or "timeline"
 Boolean hasDoneOSCGrossHack = false;
 
 void setup() {
-  //fullScreen(P2D);
+  fullScreen(P2D);
   frameRate(30);
-  size(800,800,P2D);
+  //size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 

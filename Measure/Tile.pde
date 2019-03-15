@@ -25,8 +25,8 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 1;
-  int max = 8;
+  int current = 14;
+  int max = 14;
 
   PGraphics surface;
   PGraphics pg;
@@ -61,7 +61,7 @@ class Tile {
   int mashRoughness = 1;
 
   int holdCount = 0;
-  int holdThreshold = 150; // frames to keep the final design on for
+  int holdThreshold = 120; // frames to keep the final design on for
 
    color[][] cols = { 
     {#262e69, #44a5be, #15624c, #8b7350, #bca99d},
@@ -333,14 +333,17 @@ class Tile {
     for(int i = 0; i < limit; i++) {
       pen.setSeed(1234);
 
+      int kind = penShapes[i].getKind();
       params = penShapes[i].getParams();
-      
-      pen.line(
-        mash(params[0]) * scaleFactor, 
-        mash(params[1]) * scaleFactor, 
-        mash(params[2]) * scaleFactor, 
-        mash(params[3]) * scaleFactor
-      );
+
+      if (kind == SVG_LINE) {
+        pen.line(
+          mash(params[0]) * scaleFactor, 
+          mash(params[1]) * scaleFactor, 
+          mash(params[2]) * scaleFactor, 
+          mash(params[3]) * scaleFactor
+        );
+      }
     }
   }
 

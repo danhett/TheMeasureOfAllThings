@@ -40,7 +40,7 @@ NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 float rectSize = 800;
-float scaleFactor = 0.8f;
+float scaleFactor = 0.9f;
 float realRectSize = rectSize * scaleFactor;
 
 Boolean DEBUG_MODE = false;
@@ -48,13 +48,13 @@ Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
-String INTERACTION_MODE = "timeline"; // "wobble" or "timeline" 
+String INTERACTION_MODE = "wobble"; // "wobble" or "timeline" 
 
 Boolean hasDoneOSCGrossHack = false;
 
 public void setup() {
   
-  frameRate(30);
+  frameRate(40);
   //size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
@@ -172,7 +172,7 @@ class Tile {
   int halfWidth = width/2;
   int roughness = 6;
   float randomModifier = 0;
-  int mashRoughness = 100;
+  int mashRoughness = 1;
 
   int holdCount = 0;
   int holdThreshold = 150; // frames to keep the final design on for
@@ -256,7 +256,7 @@ class Tile {
   public void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
     pencil.setGraphics(surface);
-    pencil.setStrokeWeight(1);
+    pencil.setStrokeWeight(2);
     pencil.setRoughness(0.1f);
     pencil.setUseSecondaryColour(false);
 
@@ -305,8 +305,8 @@ class Tile {
     if(reference.INTERACTION_MODE == "wobble")
       calculateAnimation();
 
-    if(!reference.USE_OSC) 
-      doPositionCheck(mouseX); // input here
+    //if(!reference.USE_OSC) 
+      //doPositionCheck(mouseX); // input here
     //else
       //doPositionCheck(mouseX);
 
@@ -328,7 +328,8 @@ class Tile {
 
     if(reference.INTERACTION_MODE == "wobble") {
       pencil.setRoughness((randomModifier * roughness) + 0.1f); // fixes circle render bug
-      pencil.setStrokeWeight(1 - randomModifier);
+      //pencil.setStrokeWeight(1.5 - randomModifier);
+      pencil.setStrokeWeight(2);
       pen.setRoughness((randomModifier * roughness));
       pen.setStrokeWeight(2 - (randomModifier * 2));
     }
@@ -403,7 +404,7 @@ class Tile {
     }
          
     for(int i = 0; i < limit; i++) {
-        if(frameCount % 2 == 0)
+        //if(frameCount % 2 == 0)
           pencil.setSeed(1234);
         
           int kind = pencilShapes[i].getKind();

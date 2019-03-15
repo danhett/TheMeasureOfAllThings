@@ -58,7 +58,7 @@ class Tile {
   int halfWidth = width/2;
   int roughness = 6;
   float randomModifier = 0;
-  int mashRoughness = 100;
+  int mashRoughness = 1;
 
   int holdCount = 0;
   int holdThreshold = 150; // frames to keep the final design on for
@@ -142,7 +142,7 @@ class Tile {
   void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
     pencil.setGraphics(surface);
-    pencil.setStrokeWeight(1);
+    pencil.setStrokeWeight(2);
     pencil.setRoughness(0.1);
     pencil.setUseSecondaryColour(false);
 
@@ -191,8 +191,8 @@ class Tile {
     if(reference.INTERACTION_MODE == "wobble")
       calculateAnimation();
 
-    if(!reference.USE_OSC) 
-      doPositionCheck(mouseX); // input here
+    //if(!reference.USE_OSC) 
+      //doPositionCheck(mouseX); // input here
     //else
       //doPositionCheck(mouseX);
 
@@ -214,7 +214,8 @@ class Tile {
 
     if(reference.INTERACTION_MODE == "wobble") {
       pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug
-      pencil.setStrokeWeight(1 - randomModifier);
+      //pencil.setStrokeWeight(1.5 - randomModifier);
+      pencil.setStrokeWeight(2);
       pen.setRoughness((randomModifier * roughness));
       pen.setStrokeWeight(2 - (randomModifier * 2));
     }
@@ -289,7 +290,7 @@ class Tile {
     }
          
     for(int i = 0; i < limit; i++) {
-        if(frameCount % 2 == 0)
+        //if(frameCount % 2 == 0)
           pencil.setSeed(1234);
         
           int kind = pencilShapes[i].getKind();

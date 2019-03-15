@@ -16,7 +16,7 @@ NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 float rectSize = 800;
-float scaleFactor = 0.8;
+float scaleFactor = 0.9;
 float realRectSize = rectSize * scaleFactor;
 
 Boolean DEBUG_MODE = false;
@@ -30,7 +30,7 @@ Boolean hasDoneOSCGrossHack = false;
 
 void setup() {
   fullScreen(P2D);
-  frameRate(30);
+  frameRate(40);
   //size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");

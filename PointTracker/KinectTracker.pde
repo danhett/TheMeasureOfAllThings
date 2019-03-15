@@ -67,11 +67,11 @@ class KinectTracker {
 
   PVector getLerpedPos() {
     if (trackCount < trackThreshold) {
-      println("nobody there");
+      //println("nobody there");
       lerpedLoc.x = 0;
       lerpedLoc.y = 0;
     } else {
-      println("someone there!");
+      //println("someone there!");
     }
 
     return lerpedLoc;

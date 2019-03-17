@@ -29,6 +29,6 @@ https://www.instagram.com/p/BvEntyXHsxB/
 - every lovely enthusiastic human that said nice things about it out in Lahore
 
 ## Licensing 
-PLEASE NOTE this code is provided as-is, it's an absolute hot mess, such is the way when you write code in a massive hurry on a residency in a diffrent country on not enough sleep. I'm providing it for reference and learning and whatever else, and as such it is distributed under the extremely permissive/confrontation DO WHAT THE FUCK YOU WANT TO public license, see LICENSE.md for more information. 
+PLEASE NOTE this code is provided as-is, it's an absolute hot mess, such is the way when you write code in a massive hurry on a residency in a diffrent country on not enough sleep. I'm providing it for reference and learning and whatever else, and as such it is distributed under the extremely permissive/confrontational DO WHAT THE FUCK YOU WANT TO public license, see LICENSE.md for more information. 
 
 Thanks! 

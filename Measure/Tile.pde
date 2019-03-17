@@ -35,15 +35,19 @@ class Tile {
 
   PImage paper;
 
-  int SVG_LINE = 4;
+  // codes returned when we check for what the child node is in the SVG's
+  int SVG_LINE = 4; 
   int SVG_CIRCLE = 31;
 
+  // counters. change 'max' if more patterns are added, obviously
   int current = 1;
   int max = 19;
 
+  // draw surfaces for render passes
   PGraphics surface;
   PGraphics pg;
 
+  // big bunch of clunky timers that control the animation steps. filth, sorry
   int penciltimer = 2;
   int pencilcurrentTime = 0;
   int pencilcurrentSteps = 0;
@@ -59,6 +63,7 @@ class Tile {
 
   Boolean finished = false;
 
+  // counters for the progress of each animation component 
   int ANIM_STEP = 0;
   int CURRENT_STEP = 0;
   int DRAW_STEPS = 0;
@@ -68,14 +73,18 @@ class Tile {
 
   String animationDirection = "up";
 
+  // messiness, used when distorting the artwork
   int halfWidth = width/2;
   int roughness = 6;
   float randomModifier = 0;
   int mashRoughness = 1;
 
+  // frames to keep the final design on for. change holdThreshold for longer/shorter
   int holdCount = 0;
-  int holdThreshold = 80; // frames to keep the final design on for
+  int holdThreshold = 80;
 
+  // colours! sampled from various sources. 
+  // see: https://www.instagram.com/p/Bu6Y5WeHmYK/
   color[][] cols = { 
     {#262e69, #44a5be, #15624c, #8b7350, #bca99d}, 
     {#cb6149, #ce642e, #b19077, #f3e5be, #613839}, 
@@ -99,7 +108,6 @@ class Tile {
 
   // output colours
   color col1, col2, col3, col4, col5;
-
   color[] colsTempList = { col1, col2, col3, col4, col5};
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor) {
@@ -232,7 +240,7 @@ class Tile {
     }
 
     if (reference.INTERACTION_MODE == "wobble") {
-      pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug
+      pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug when zero
       //pencil.setStrokeWeight(1.5 - randomModifier);
       pencil.setStrokeWeight(2);
       pen.setRoughness((randomModifier * roughness));
@@ -282,7 +290,7 @@ class Tile {
     if (reference.INVERT_COLOURS)
       fill(255, 255, 255);
     else 
-    fill(0, 0, 0);
+      fill(0, 0, 0);
 
     text("- - - - - - - - - - - - -", 20, 80);
     text(round(frameRate) + " fps", 20, 100);
@@ -365,6 +373,7 @@ class Tile {
     }
   }
 
+  // used to quickly distort things. bit gross but works great, fight me
   float mash(float in) {
     if (reference.INTERACTION_MODE == "timeline")
       return in;
@@ -401,7 +410,7 @@ class Tile {
       pg.clear();
       pg.noStroke();
       for (int i = 0; i <= limit; i++) {  
-        try {
+        try { // LOL added this catch while projecting on the side of the building. works tho.
           pg.pushMatrix();
           pg.translate(mash(0) * 2, mash(0) * 2);
 
@@ -506,10 +515,11 @@ class Tile {
       return col5;
     }
 
-    return #FF0000;
-    //return colsTempList[int(random(colsTempList.length))];
+    return #FF0000; // if this colours displays, something went wrong
+    //return colsTempList[int(random(colsTempList.length))]; // or randomise for lols
   }
 
+  // hacky way to get the fill colour from an imported SVG shape. 
   color getPShapeFillColor(final PShape sh) {
     try {
       final java.lang.reflect.Field f = 

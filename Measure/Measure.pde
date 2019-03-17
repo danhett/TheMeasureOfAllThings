@@ -1,16 +1,20 @@
 /**
- * THE MEASURE OF ALL THING
+ * THE MEASURE OF ALL THINGS
  * Dan Hett (hellodanhett@gmail.com)
+ * 
+ * Created for the "Sheherezade" residency that I took part in, 
+ * on location in Lahore, Pakistan in March 2019.
  *
- * TODO
- * - colour selection per patterns
- * - dead zone in the middle of the detection space (TAKE FROM INPUT SOURCE)
- * - fix colour handling in the main class
+ * The code is heavily commented for clarity, but is 
+ * fairly messy as much of it was written either on
+ * aeroplanes or on rooftops in Lahore, or hotel rooms. 
+ * 
+ * Distributed under the Do What The Fuck You Want public license.
  */
 import at.mukprojects.console.*;
 import oscP5.*;
 import netP5.*;
-  
+
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 Tile tile;
@@ -31,13 +35,13 @@ Boolean hasDoneOSCGrossHack = false;
 void setup() {
   fullScreen(P2D);
   frameRate(40);
-  //size(800,800,P2D);
+  //size(1000,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
   tile = new Tile(this, width/2, height/2, scaleFactor);
 
-  if(DEBUG_MODE) 
+  if (DEBUG_MODE) 
     setupConsole();
 }
 
@@ -51,22 +55,22 @@ void mousePressed() {
 }
 
 void draw() {
-  
+
   // do this here once, as it blocks the main thread in setup() and causes a crash
-  if(USE_OSC) {
-      if(!hasDoneOSCGrossHack) {
+  if (USE_OSC) {
+    if (!hasDoneOSCGrossHack) {
       hasDoneOSCGrossHack = true;
-      oscP5 = new OscP5(this,13000);
-      myRemoteLocation = new NetAddress("127.0.0.1",12000);
+      oscP5 = new OscP5(this, 13000);
+      myRemoteLocation = new NetAddress("127.0.0.1", 12000);
     }
   }
 
-  if(INVERT_COLOURS)
+  if (INVERT_COLOURS)
     background(0);
   else
     background(255);
 
-  if(DEBUG_MODE) {
+  if (DEBUG_MODE) {
     noFill();
     stroke(255, 0, 0);
     rect(width / 2 - realRectSize / 2, height / 2 - realRectSize / 2, rectSize * scaleFactor, rectSize * scaleFactor);
@@ -74,7 +78,7 @@ void draw() {
 
   tile.draw();
 
-  if(DEBUG_MODE) 
+  if (DEBUG_MODE) 
     drawConsole();
 }
 
@@ -84,7 +88,7 @@ void drawConsole() {
 }
 
 void oscEvent(OscMessage theOscMessage) {
-  if(USE_OSC) {
+  if (USE_OSC) {
     tile.updateValue(theOscMessage.get(0).floatValue());
   }
 }

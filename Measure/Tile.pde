@@ -1,3 +1,16 @@
+/**
+ * THE MEASURE OF ALL THINGS
+ * Dan Hett (hellodanhett@gmail.com)
+ * 
+ * Created for the "Sheherezade" residency that I took part in, 
+ * on location in Lahore, Pakistan in March 2019.
+ *
+ * The code is heavily commented for clarity, but is 
+ * fairly messy as much of it was written either on
+ * aeroplanes or on rooftops in Lahore, or hotel rooms. 
+ * 
+ * Distributed under the Do What The Fuck You Want public license.
+ */
 import org.gicentre.handy.*;
 import ch.bildspur.postfx.builder.*;
 import ch.bildspur.postfx.pass.*;
@@ -25,8 +38,8 @@ class Tile {
   int SVG_LINE = 4;
   int SVG_CIRCLE = 31;
 
-  int current = 18;
-  int max = 18;
+  int current = 1;
+  int max = 19;
 
   PGraphics surface;
   PGraphics pg;
@@ -61,29 +74,29 @@ class Tile {
   int mashRoughness = 1;
 
   int holdCount = 0;
-  int holdThreshold = 120; // frames to keep the final design on for
+  int holdThreshold = 80; // frames to keep the final design on for
 
-   color[][] cols = { 
-    {#262e69, #44a5be, #15624c, #8b7350, #bca99d},
-    {#cb6149, #ce642e, #b19077, #f3e5be, #613839},
-    {#e2a6a6, #4abed3, #228f9c, #c52353, #ffddb5},
-    {#7ab191, #35334b, #dfa834, #e8d7bb, #f9caa5},
-    {#ffefe4, #a38976, #c92027, #0d886d, #414da0},
-    {#d5d2c9, #63beb7, #989dc3, #283679, #9f5d3d},
-    {#ced2db, #cda32c, #2e56a6, #49aa7c, #965924},
-    {#05698f, #0382a6, #49896b, #d1aa49, #699097},
-    {#f04f3c, #8180bd, #f1e8e1, #ffd79e, #3b5233},
-    {#efe8de, #bc892c, #272a6b, #ca2127, #7c3d21},
-    {#6b83b4, #56a57e, #b5976a, #27326f, #fef5f9},
-    {#5481ae, #e45625, #f16577, #0e2917, #ede8eb},
-    {#b76728, #40617a, #eebf39, #c5cad8, #d46b34},
-    {#e6e5e1, #a66227, #2c2c2e, #c8ae90, #a67e3f},
+  color[][] cols = { 
+    {#262e69, #44a5be, #15624c, #8b7350, #bca99d}, 
+    {#cb6149, #ce642e, #b19077, #f3e5be, #613839}, 
+    {#e2a6a6, #4abed3, #228f9c, #c52353, #ffddb5}, 
+    {#7ab191, #35334b, #dfa834, #e8d7bb, #f9caa5}, 
+    {#ffefe4, #a38976, #c92027, #0d886d, #414da0}, 
+    {#d5d2c9, #63beb7, #989dc3, #283679, #9f5d3d}, 
+    {#ced2db, #cda32c, #2e56a6, #49aa7c, #965924}, 
+    {#05698f, #0382a6, #49896b, #d1aa49, #699097}, 
+    {#f04f3c, #8180bd, #f1e8e1, #ffd79e, #3b5233}, 
+    {#efe8de, #bc892c, #272a6b, #ca2127, #7c3d21}, 
+    {#6b83b4, #56a57e, #b5976a, #27326f, #fef5f9}, 
+    {#5481ae, #e45625, #f16577, #0e2917, #ede8eb}, 
+    {#b76728, #40617a, #eebf39, #c5cad8, #d46b34}, 
+    {#e6e5e1, #a66227, #2c2c2e, #c8ae90, #a67e3f}, 
     {#017ea9, #2d2b71, #e9e1cc, #44999b, #0989ae}
   };
 
   // input colours from the artwork
   color found1, found2, found3, found4, found5, found6, found7, found8, found9, found10;
-  
+
   // output colours
   color col1, col2, col3, col4, col5;
 
@@ -94,7 +107,7 @@ class Tile {
     xPos = _xPos;
     yPos = _yPos;
     scaleFactor = _scaleFactor;
-    
+
     fx = new PostFX(reference); 
 
     noFill();
@@ -131,10 +144,15 @@ class Tile {
   }
 
   void updateSketch() {
-    if(current < max) 
-      current++;
-    else
-      current = 1;
+    // SEQUENTIAL
+    //if (current < max) 
+      //current++;
+    //else
+      //current = 1;
+
+    // RANDOM
+    current = int(random(max) + 1);
+    println("SWITCHING TO " + current);
 
     loadSVGs();
   }
@@ -150,7 +168,7 @@ class Tile {
     pen.setGraphics(surface);
     pen.setRoughness(1);
 
-    if(reference.INVERT_COLOURS)
+    if (reference.INVERT_COLOURS)
       pen.setStrokeColour(255);
   }
 
@@ -185,34 +203,35 @@ class Tile {
     drawOverlay();
 
     surface.endDraw();
-    
+
     image(surface, xPos - (width*0.5), yPos - (height*0.5));
 
-    if(reference.INTERACTION_MODE == "wobble")
+    if (reference.INTERACTION_MODE == "wobble")
       calculateAnimation();
 
     //if(!reference.USE_OSC) 
-      //doPositionCheck(mouseX); // input here
+    //doPositionCheck(mouseX); // input here
     //else
-      //doPositionCheck(mouseX);
+    //doPositionCheck(mouseX);
 
     //fx.render()
     //.vignette(0.5 * randomModifier, 0.6 * randomModifier)
     //.compose();
 
-    if(reference.DEBUG_MODE)
+    if (reference.DEBUG_MODE)
       updateReadout();
+
+    //saveFrame();
   }
 
   void doPositionCheck(float input) {
-    if(input < width/2) {
+    if (input < width/2) {
       randomModifier = 1-(input / halfWidth);
-    } 
-    else {            
+    } else {            
       randomModifier = ((input - halfWidth) / halfWidth);
     }
 
-    if(reference.INTERACTION_MODE == "wobble") {
+    if (reference.INTERACTION_MODE == "wobble") {
       pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug
       //pencil.setStrokeWeight(1.5 - randomModifier);
       pencil.setStrokeWeight(2);
@@ -220,38 +239,34 @@ class Tile {
       pen.setStrokeWeight(2 - (randomModifier * 2));
     }
 
-    if(reference.INTERACTION_MODE == "timeline") {
+    if (reference.INTERACTION_MODE == "timeline") {
       //println(int(DRAW_STEPS * randomModifier));
-      
+
       try {
         CURRENT_STEP = DRAW_STEPS - int(DRAW_STEPS * randomModifier);
       }
-      catch(Exception e)  {
-        // nom nom nom 
+      catch(Exception e) {
+        // nom nom nom
       }
     }
   }
 
   void calculateAnimation() {
-    if(animationDirection == "up") {
-      if(ANIM_STEP < (DRAW_STEPS-1)) {
+    if (animationDirection == "up") {
+      if (ANIM_STEP < (DRAW_STEPS-1)) {
         ANIM_STEP++;
-      }
-      else  {
-        if(holdCount < holdThreshold) {
+      } else {
+        if (holdCount < holdThreshold) {
           holdCount++;
-        }
-        else {
+        } else {
           holdCount = 0;
           animationDirection = "down";
         }
       }
-    }
-    else {
-      if(ANIM_STEP > 0) {
+    } else {
+      if (ANIM_STEP > 0) {
         ANIM_STEP--;
-      }
-      else {
+      } else {
         updateSketch();
         animationDirection = "up";
       }
@@ -263,12 +278,12 @@ class Tile {
   void updateReadout() {
     fill(255, 50, 0);
     text("THE MEASURE OF ALL THINGS", 20, 60);
-    
-    if(reference.INVERT_COLOURS)
+
+    if (reference.INVERT_COLOURS)
       fill(255, 255, 255);
     else 
-      fill(0, 0, 0);
-    
+    fill(0, 0, 0);
+
     text("- - - - - - - - - - - - -", 20, 80);
     text(round(frameRate) + " fps", 20, 100);
     text("pattern " + current + " of " + max, 20, 120);
@@ -285,33 +300,37 @@ class Tile {
 
     int limit = pencilmaxSteps;
 
-    if(CURRENT_STEP < pencilmaxSteps) {
+    if (CURRENT_STEP < pencilmaxSteps) {
       limit = CURRENT_STEP;
     }
-         
-    for(int i = 0; i < limit; i++) {
-        //if(frameCount % 2 == 0)
-          pencil.setSeed(1234);
-        
-          int kind = pencilShapes[i].getKind();
-          params = pencilShapes[i].getParams();
 
-          if (kind == SVG_LINE) {
-            pencil.line(
-              mash(params[0]) * scaleFactor, 
-              mash(params[1]) * scaleFactor, 
-              mash(params[2]) * scaleFactor, 
-              mash(params[3]) * scaleFactor
+    for (int i = 0; i < limit; i++) {
+      //if(frameCount % 2 == 0)
+      pencil.setSeed(1234);
+
+      try {
+        int kind = pencilShapes[i].getKind();
+        params = pencilShapes[i].getParams();
+
+        if (kind == SVG_LINE) {
+          pencil.line(
+            mash(params[0]) * scaleFactor, 
+            mash(params[1]) * scaleFactor, 
+            mash(params[2]) * scaleFactor, 
+            mash(params[3]) * scaleFactor
             );
-          } 
-          else if (kind == SVG_CIRCLE) {
-            pencil.ellipse(
-              params[0] * scaleFactor, 
-              params[1] * scaleFactor, 
-              params[2] * scaleFactor, 
-              params[3] * scaleFactor
+        } else if (kind == SVG_CIRCLE) {
+          pencil.ellipse(
+            params[0] * scaleFactor, 
+            params[1] * scaleFactor, 
+            params[2] * scaleFactor, 
+            params[3] * scaleFactor
             );
-        }  
+        }
+      }
+      catch(Exception e) {
+        // nom nom nom
+      }
     }
   }
 
@@ -323,14 +342,13 @@ class Tile {
 
     int limit = PEN_STEPS;
 
-    if(CURRENT_STEP > PENCIL_STEPS && CURRENT_STEP < PENCIL_STEPS + maxSteps) {
+    if (CURRENT_STEP > PENCIL_STEPS && CURRENT_STEP < PENCIL_STEPS + maxSteps) {
       limit = CURRENT_STEP - PENCIL_STEPS;
-    }
-    else if(CURRENT_STEP < PENCIL_STEPS + 1){
+    } else if (CURRENT_STEP < PENCIL_STEPS + 1) {
       limit = 0;
     }
 
-    for(int i = 0; i < limit; i++) {
+    for (int i = 0; i < limit; i++) {
       pen.setSeed(1234);
 
       int kind = penShapes[i].getKind();
@@ -342,13 +360,13 @@ class Tile {
           mash(params[1]) * scaleFactor, 
           mash(params[2]) * scaleFactor, 
           mash(params[3]) * scaleFactor
-        );
+          );
       }
     }
   }
 
   float mash(float in) {
-    if(reference.INTERACTION_MODE == "timeline")
+    if (reference.INTERACTION_MODE == "timeline")
       return in;
 
     return random(in-(mashRoughness*randomModifier), in+(mashRoughness*randomModifier));
@@ -356,7 +374,7 @@ class Tile {
 
   /**
    * DRAW COLOURS
-   */  
+   */
 
   PShape drawShape; 
   void drawColours() {
@@ -369,41 +387,40 @@ class Tile {
 
     int limit = PEN_STEPS+PENCIL_STEPS;
 
-    if(CURRENT_STEP > (PENCIL_STEPS+PEN_STEPS) && CURRENT_STEP < (PENCIL_STEPS+PEN_STEPS) + COLOUR_STEPS) {
+    if (CURRENT_STEP > (PENCIL_STEPS+PEN_STEPS) && CURRENT_STEP < (PENCIL_STEPS+PEN_STEPS) + COLOUR_STEPS) {
       limit = CURRENT_STEP - PENCIL_STEPS - PEN_STEPS;
-    }
-    else if(CURRENT_STEP < PEN_STEPS + PENCIL_STEPS + 1){
+    } else if (CURRENT_STEP < PEN_STEPS + PENCIL_STEPS + 1) {
       limit = 0;
     }
 
-    if(reference.USE_CODE_COLOURS)
+    if (reference.USE_CODE_COLOURS)
       colours.disableStyle();
 
-    if(CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
+    if (CURRENT_STEP > PENCIL_STEPS+PEN_STEPS) {
       pg.beginDraw();
       pg.clear();
       pg.noStroke();
-      for(int i = 0; i <= limit; i++) {  
-          try {
-            pg.pushMatrix();
-            pg.translate(mash(0) * 2, mash(0) * 2);
+      for (int i = 0; i <= limit; i++) {  
+        try {
+          pg.pushMatrix();
+          pg.translate(mash(0) * 2, mash(0) * 2);
 
-            // make the PShape
-            drawShape = colours.getChild(i);
-            
-            // if needed, re-colour it
-            if(reference.USE_CODE_COLOURS) {
-              pg.fill(getCorrectColour(getPShapeFillColor(drawShape)));
-            }
-            
-            // draw the sucker
-            pg.shape(drawShape, 0, 0);
-            
-            pg.popMatrix();
+          // make the PShape
+          drawShape = colours.getChild(i);
+
+          // if needed, re-colour it
+          if (reference.USE_CODE_COLOURS) {
+            pg.fill(getCorrectColour(getPShapeFillColor(drawShape)));
           }
-          catch(Exception e)  {
-            // nom nom nom 
-          }
+
+          // draw the sucker
+          pg.shape(drawShape, 0, 0);
+
+          pg.popMatrix();
+        }
+        catch(Exception e) {
+          // nom nom nom
+        }
       }
       pg.endDraw();
 
@@ -448,16 +465,46 @@ class Tile {
 
   // TODO: this is fucking horrible, make not horrible
   color getCorrectColour(color inCol) {
-    if(found1 == #000000 || found1 == inCol) { found1 = inCol; return col1; }
-    if(found2 == #000000 || found2 == inCol) { found2 = inCol; return col2; }
-    if(found3 == #000000 || found3 == inCol) { found3 = inCol; return col3; }
-    if(found4 == #000000 || found4 == inCol) { found4 = inCol; return col4; }
-    if(found5 == #000000 || found5 == inCol) { found5 = inCol; return col5; }
-    if(found6 == #000000 || found6 == inCol) { found6 = inCol; return col1; }
-    if(found7 == #000000 || found7 == inCol) { found7 = inCol; return col2; }
-    if(found8 == #000000 || found8 == inCol) { found8 = inCol; return col3; }
-    if(found9 == #000000 || found9 == inCol) { found9 = inCol; return col4; }
-    if(found10 == #000000 || found10 == inCol) { found10 = inCol; return col5; }
+    if (found1 == #000000 || found1 == inCol) { 
+      found1 = inCol; 
+      return col1;
+    }
+    if (found2 == #000000 || found2 == inCol) { 
+      found2 = inCol; 
+      return col2;
+    }
+    if (found3 == #000000 || found3 == inCol) { 
+      found3 = inCol; 
+      return col3;
+    }
+    if (found4 == #000000 || found4 == inCol) { 
+      found4 = inCol; 
+      return col4;
+    }
+    if (found5 == #000000 || found5 == inCol) { 
+      found5 = inCol; 
+      return col5;
+    }
+    if (found6 == #000000 || found6 == inCol) { 
+      found6 = inCol; 
+      return col1;
+    }
+    if (found7 == #000000 || found7 == inCol) { 
+      found7 = inCol; 
+      return col2;
+    }
+    if (found8 == #000000 || found8 == inCol) { 
+      found8 = inCol; 
+      return col3;
+    }
+    if (found9 == #000000 || found9 == inCol) { 
+      found9 = inCol; 
+      return col4;
+    }
+    if (found10 == #000000 || found10 == inCol) { 
+      found10 = inCol; 
+      return col5;
+    }
 
     return #FF0000;
     //return colsTempList[int(random(colsTempList.length))];
@@ -467,11 +514,11 @@ class Tile {
     try {
       final java.lang.reflect.Field f = 
         PShape.class.getDeclaredField("fillColor");
-  
+
       f.setAccessible(true);
       return f.getInt(sh);
     }
- 
+
     catch (ReflectiveOperationException cause) {
       throw new RuntimeException(cause);
     }

@@ -41,7 +41,7 @@ class Tile {
 
   // counters. change 'max' if more patterns are added, obviously
   int current = 1;
-  int max = 1;
+  int max = 6;
 
   // draw surfaces for render passes
   PGraphics surface;
@@ -161,14 +161,14 @@ class Tile {
 
   void updateSketch() {
     // SEQUENTIAL
-    //if (current < max) 
-      //current++;
-    //else
-      //current = 1;
+    if (current < max) 
+      current++;
+    else
+      current = 1;
 
     // RANDOM
-    current = int(random(max) + 1);
-    println("SWITCHING TO " + current);
+    //current = int(random(max) + 1);
+    //println("SWITCHING TO " + current);
 
     loadSVGs();
   }

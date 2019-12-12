@@ -26,8 +26,6 @@ Boolean DEBUG_MODE = false;
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
-String INTERACTION_MODE = "wobble"; // "wobble" or "timeline" 
-
 SyphonServer server;
 
 import ddf.minim.analysis.*;
@@ -83,40 +81,42 @@ int mult = 100;
 
 // usable output and threshold
 float average = 0.0;
-float threshold = 0.05;
+float threshold = 0.02;
 
 void handleAudioInput() {
   fft.forward(in.mix);
   
   average = (fft.getBand(low) + fft.getBand(med) + fft.getBand(high)) / 3;
-  println(average);
+  //println(average);
   
   if(average > threshold) 
     tile.enableBuild();
   else
     tile.disableBuild();
   
-  fill(255,0,0);
-  rect(0, 0, fft.getBand(low) * mult, 50);
-  
-  fill(0,255,0);
-  rect(0, 50, fft.getBand(med) * mult, 50);
-  
-  fill(0,0,255);
-  rect(0, 100, fft.getBand(high) * mult, 50);
-  
-  noFill();
-  stroke(255);
-  for(int i = 0; i < fft.specSize(); i++)
-  {
-    line(i, height, i, height - fft.getBand(i) * mult);
-  }  
+  if(DEBUG_MODE) {
+    fill(255,0,0);
+    rect(0, 0, fft.getBand(low) * mult, 50);
+    
+    fill(0,255,0);
+    rect(0, 50, fft.getBand(med) * mult, 50);
+    
+    fill(0,0,255);
+    rect(0, 100, fft.getBand(high) * mult, 50);
+    
+    noFill();
+    stroke(255);
+    for(int i = 0; i < fft.specSize(); i++)
+    {
+      line(i, height, i, height - fft.getBand(i) * mult);
+    }   
+  }
 }
 
 void keyPressed() {
- // tile.enableBuild();
+  tile.enableBuild();
 }
 
 void keyReleased() {
-  //tile.disableBuild();
+  tile.disableBuild();
 }

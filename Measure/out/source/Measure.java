@@ -6,6 +6,9 @@ import processing.opengl.*;
 import at.mukprojects.console.*; 
 import oscP5.*; 
 import netP5.*; 
+import codeanticode.syphon.*; 
+import ddf.minim.analysis.*; 
+import ddf.minim.*; 
 import org.gicentre.handy.*; 
 import ch.bildspur.postfx.builder.*; 
 import ch.bildspur.postfx.pass.*; 
@@ -23,20 +26,23 @@ import java.io.IOException;
 public class Measure extends PApplet {
 
 /**
- * THE MEASURE OF ALL THING
+ * THE MEASURE OF ALL THINGS
  * Dan Hett (hellodanhett@gmail.com)
+ * 
+ * Created for the "Sheherezade" residency that I took part in, 
+ * on location in Lahore, Pakistan in March 2019.
  *
- * TODO
- * - colour selection per patterns
- * - dead zone in the middle of the detection space (TAKE FROM INPUT SOURCE)
- * - fix colour handling in the main class
+ * The code is heavily commented for clarity, but is 
+ * fairly messy as much of it was written either on
+ * aeroplanes or on rooftops in Lahore, or hotel rooms. 
+ * 
+ * Distributed under the Do What The Fuck You Want public license.
  */
 
 
 
 
-OscP5 oscP5;
-NetAddress myRemoteLocation;
+
 Tile tile;
 Console console;
 float rectSize = 800;
@@ -44,47 +50,36 @@ float scaleFactor = 0.9f;
 float realRectSize = rectSize * scaleFactor;
 
 Boolean DEBUG_MODE = false;
-Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
-String INTERACTION_MODE = "wobble"; // "wobble" or "timeline" 
+SyphonServer server;
 
-Boolean hasDoneOSCGrossHack = false;
+
+
+
+Minim minim;
+AudioInput in;
+FFT fft;
 
 public void setup() {
+  //fullScreen(P2D);
+  frameRate(100);
   
-  frameRate(40);
-  //size(1000,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
   tile = new Tile(this, width/2, height/2, scaleFactor);
 
-  if (DEBUG_MODE) 
-    setupConsole();
-}
+  server = new SyphonServer(this, "Measure Of All Things");
+  
+  minim = new Minim(this);
 
-public void setupConsole() {
-  console = new Console(this);
-  console.start();
-}
-
-public void mousePressed() {
-  tile.updateSketch();
+  in = minim.getLineIn(Minim.STEREO, 2048);
+  fft = new FFT(in.bufferSize(), 44100);
 }
 
 public void draw() {
-
-  // do this here once, as it blocks the main thread in setup() and causes a crash
-  if (USE_OSC) {
-    if (!hasDoneOSCGrossHack) {
-      hasDoneOSCGrossHack = true;
-      oscP5 = new OscP5(this, 13000);
-      myRemoteLocation = new NetAddress("127.0.0.1", 12000);
-    }
-  }
-
   if (INVERT_COLOURS)
     background(0);
   else
@@ -97,21 +92,74 @@ public void draw() {
   }
 
   tile.draw();
-
-  if (DEBUG_MODE) 
-    drawConsole();
+  
+  server.sendScreen();
+  
+  handleAudioInput();
 }
 
-public void drawConsole() {
-  console.draw();  
-  console.print();
-}
+// ranges
+int low = 100;
+int med = 300;
+int high = 800;
 
-public void oscEvent(OscMessage theOscMessage) {
-  if (USE_OSC) {
-    tile.updateValue(theOscMessage.get(0).floatValue());
+// visual multiplier
+int mult = 100;
+
+// usable output and threshold
+float average = 0.0f;
+float threshold = 0.02f;
+
+public void handleAudioInput() {
+  fft.forward(in.mix);
+  
+  average = (fft.getBand(low) + fft.getBand(med) + fft.getBand(high)) / 3;
+  //println(average);
+  
+  if(average > threshold) 
+    tile.enableBuild();
+  else
+    tile.disableBuild();
+  
+  if(DEBUG_MODE) {
+    fill(255,0,0);
+    rect(0, 0, fft.getBand(low) * mult, 50);
+    
+    fill(0,255,0);
+    rect(0, 50, fft.getBand(med) * mult, 50);
+    
+    fill(0,0,255);
+    rect(0, 100, fft.getBand(high) * mult, 50);
+    
+    noFill();
+    stroke(255);
+    for(int i = 0; i < fft.specSize(); i++)
+    {
+      line(i, height, i, height - fft.getBand(i) * mult);
+    }   
   }
 }
+
+public void keyPressed() {
+  tile.enableBuild();
+}
+
+public void keyReleased() {
+  tile.disableBuild();
+}
+/**
+ * THE MEASURE OF ALL THINGS
+ * Dan Hett (hellodanhett@gmail.com)
+ * 
+ * Created for the "Sheherezade" residency that I took part in, 
+ * on location in Lahore, Pakistan in March 2019.
+ *
+ * The code is heavily commented for clarity, but is 
+ * fairly messy as much of it was written either on
+ * aeroplanes or on rooftops in Lahore, or hotel rooms. 
+ * 
+ * Distributed under the Do What The Fuck You Want public license.
+ */
 
 
 
@@ -136,15 +184,19 @@ class Tile {
 
   PImage paper;
 
-  int SVG_LINE = 4;
+  // codes returned when we check for what the child node is in the SVG's
+  int SVG_LINE = 4; 
   int SVG_CIRCLE = 31;
 
+  // counters. change 'max' if more patterns are added, obviously
   int current = 1;
   int max = 19;
 
+  // draw surfaces for render passes
   PGraphics surface;
   PGraphics pg;
 
+  // big bunch of clunky timers that control the animation steps. filth, sorry
   int penciltimer = 2;
   int pencilcurrentTime = 0;
   int pencilcurrentSteps = 0;
@@ -160,6 +212,7 @@ class Tile {
 
   Boolean finished = false;
 
+  // counters for the progress of each animation component 
   int ANIM_STEP = 0;
   int CURRENT_STEP = 0;
   int DRAW_STEPS = 0;
@@ -169,14 +222,18 @@ class Tile {
 
   String animationDirection = "up";
 
+  // messiness, used when distorting the artwork
   int halfWidth = width/2;
   int roughness = 6;
   float randomModifier = 0;
   int mashRoughness = 1;
 
+  // frames to keep the final design on for. change holdThreshold for longer/shorter
   int holdCount = 0;
-  int holdThreshold = 80; // frames to keep the final design on for
+  int holdThreshold = 10;
 
+  // colours! sampled from various sources. 
+  // see: https://www.instagram.com/p/Bu6Y5WeHmYK/
   int[][] cols = { 
     {0xff262e69, 0xff44a5be, 0xff15624c, 0xff8b7350, 0xffbca99d}, 
     {0xffcb6149, 0xffce642e, 0xffb19077, 0xfff3e5be, 0xff613839}, 
@@ -200,8 +257,9 @@ class Tile {
 
   // output colours
   int col1, col2, col3, col4, col5;
-
   int[] colsTempList = { col1, col2, col3, col4, col5};
+  
+  Boolean canBuild = false;
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor) {
     reference = ref;
@@ -307,7 +365,8 @@ class Tile {
 
     image(surface, xPos - (width*0.5f), yPos - (height*0.5f));
 
-    if (reference.INTERACTION_MODE == "wobble")
+    //if (reference.INTERACTION_MODE == "wobble")
+    if(canBuild)
       calculateAnimation();
 
     //if(!reference.USE_OSC) 
@@ -332,24 +391,11 @@ class Tile {
       randomModifier = ((input - halfWidth) / halfWidth);
     }
 
-    if (reference.INTERACTION_MODE == "wobble") {
-      pencil.setRoughness((randomModifier * roughness) + 0.1f); // fixes circle render bug
-      //pencil.setStrokeWeight(1.5 - randomModifier);
-      pencil.setStrokeWeight(2);
-      pen.setRoughness((randomModifier * roughness));
-      pen.setStrokeWeight(2 - (randomModifier * 2));
-    }
-
-    if (reference.INTERACTION_MODE == "timeline") {
-      //println(int(DRAW_STEPS * randomModifier));
-
-      try {
-        CURRENT_STEP = DRAW_STEPS - PApplet.parseInt(DRAW_STEPS * randomModifier);
-      }
-      catch(Exception e) {
-        // nom nom nom
-      }
-    }
+    pencil.setRoughness((randomModifier * roughness) + 0.1f); // fixes circle render bug when zero
+    //pencil.setStrokeWeight(1.5 - randomModifier);
+    pencil.setStrokeWeight(2);
+    pen.setRoughness((randomModifier * roughness));
+    pen.setStrokeWeight(2 - (randomModifier * 2));
   }
 
   public void calculateAnimation() {
@@ -378,17 +424,26 @@ class Tile {
 
   public void updateReadout() {
     fill(255, 50, 0);
-    text("THE MEASURE OF ALL THINGS", 20, 60);
+    text("THE MEASURE OF ALL THINGS", 50, 60);
 
     if (reference.INVERT_COLOURS)
       fill(255, 255, 255);
     else 
-    fill(0, 0, 0);
+      fill(0, 0, 0);
 
-    text("- - - - - - - - - - - - -", 20, 80);
-    text(round(frameRate) + " fps", 20, 100);
-    text("pattern " + current + " of " + max, 20, 120);
-    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 140);
+    text("- - - - - - - - - - - - -", 50, 80);
+    text("FPS: " + round(frameRate) + "     STEP: " + CURRENT_STEP + " / " + DRAW_STEPS, 50, 100);
+    text("pattern " + current + " of " + max, 50, 120);
+
+    if(reference.average > reference.threshold) {
+      fill(0, 255, 0);
+    } 
+    else {
+      fill(255, 0, 0);
+    }
+
+    text("AV. VOLUME: " + reference.average, 50, 140);
+
     noFill();
   }
 
@@ -466,10 +521,8 @@ class Tile {
     }
   }
 
+  // used to quickly distort things. bit gross but works great, fight me
   public float mash(float in) {
-    if (reference.INTERACTION_MODE == "timeline")
-      return in;
-
     return random(in-(mashRoughness*randomModifier), in+(mashRoughness*randomModifier));
   }
 
@@ -502,7 +555,7 @@ class Tile {
       pg.clear();
       pg.noStroke();
       for (int i = 0; i <= limit; i++) {  
-        try {
+        try { // LOL added this catch while projecting on the side of the building. works tho.
           pg.pushMatrix();
           pg.translate(mash(0) * 2, mash(0) * 2);
 
@@ -607,10 +660,11 @@ class Tile {
       return col5;
     }
 
-    return 0xffFF0000;
-    //return colsTempList[int(random(colsTempList.length))];
+    return 0xffFF0000; // if this colours displays, something went wrong
+    //return colsTempList[int(random(colsTempList.length))]; // or randomise for lols
   }
 
+  // hacky way to get the fill colour from an imported SVG shape. 
   public int getPShapeFillColor(final PShape sh) {
     try {
       final java.lang.reflect.Field f = 
@@ -624,8 +678,16 @@ class Tile {
       throw new RuntimeException(cause);
     }
   }
+  
+  public void enableBuild() {
+     canBuild = true; 
+  }
+  
+  public void disableBuild() {
+     canBuild = false; 
+  }
 }
-  public void settings() {  fullScreen(P2D); }
+  public void settings() {  size(800,800,P2D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "Measure" };
     if (passedArgs != null) {

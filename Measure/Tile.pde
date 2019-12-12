@@ -242,24 +242,11 @@ class Tile {
       randomModifier = ((input - halfWidth) / halfWidth);
     }
 
-    if (reference.INTERACTION_MODE == "wobble") {
-      pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug when zero
-      //pencil.setStrokeWeight(1.5 - randomModifier);
-      pencil.setStrokeWeight(2);
-      pen.setRoughness((randomModifier * roughness));
-      pen.setStrokeWeight(2 - (randomModifier * 2));
-    }
-
-    if (reference.INTERACTION_MODE == "timeline") {
-      //println(int(DRAW_STEPS * randomModifier));
-
-      try {
-        CURRENT_STEP = DRAW_STEPS - int(DRAW_STEPS * randomModifier);
-      }
-      catch(Exception e) {
-        // nom nom nom
-      }
-    }
+    pencil.setRoughness((randomModifier * roughness) + 0.1); // fixes circle render bug when zero
+    //pencil.setStrokeWeight(1.5 - randomModifier);
+    pencil.setStrokeWeight(2);
+    pen.setRoughness((randomModifier * roughness));
+    pen.setStrokeWeight(2 - (randomModifier * 2));
   }
 
   void calculateAnimation() {
@@ -288,17 +275,26 @@ class Tile {
 
   void updateReadout() {
     fill(255, 50, 0);
-    text("THE MEASURE OF ALL THINGS", 20, 60);
+    text("THE MEASURE OF ALL THINGS", 50, 60);
 
     if (reference.INVERT_COLOURS)
       fill(255, 255, 255);
     else 
       fill(0, 0, 0);
 
-    text("- - - - - - - - - - - - -", 20, 80);
-    text(round(frameRate) + " fps", 20, 100);
-    text("pattern " + current + " of " + max, 20, 120);
-    text(CURRENT_STEP + " / " + DRAW_STEPS, 20, 140);
+    text("- - - - - - - - - - - - -", 50, 80);
+    text("FPS: " + round(frameRate) + "     STEP: " + CURRENT_STEP + " / " + DRAW_STEPS, 50, 100);
+    text("pattern " + current + " of " + max, 50, 120);
+
+    if(reference.average > reference.threshold) {
+      fill(0, 255, 0);
+    } 
+    else {
+      fill(255, 0, 0);
+    }
+
+    text("AV. VOLUME: " + reference.average, 50, 140);
+
     noFill();
   }
 
@@ -378,9 +374,6 @@ class Tile {
 
   // used to quickly distort things. bit gross but works great, fight me
   float mash(float in) {
-    if (reference.INTERACTION_MODE == "timeline")
-      return in;
-
     return random(in-(mashRoughness*randomModifier), in+(mashRoughness*randomModifier));
   }
 

@@ -108,7 +108,7 @@ int mult = 100;
 
 // usable output and threshold
 float average = 0.0f;
-float threshold = 0.02f;
+float threshold = 0.01f;
 
 public void handleAudioInput() {
   fft.forward(in.mix);
@@ -190,7 +190,7 @@ class Tile {
 
   // counters. change 'max' if more patterns are added, obviously
   int current = 1;
-  int max = 19;
+  int max = 1;
 
   // draw surfaces for render passes
   PGraphics surface;
@@ -251,6 +251,16 @@ class Tile {
     {0xffe6e5e1, 0xffa66227, 0xff2c2c2e, 0xffc8ae90, 0xffa67e3f}, 
     {0xff017ea9, 0xff2d2b71, 0xffe9e1cc, 0xff44999b, 0xff0989ae}
   };
+
+  /*
+  color[][] cols = { 
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
+    {#333333, #444444, #222222, #999999, #F9F9F9},
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343}
+  };
+  */
 
   // input colours from the artwork
   int found1, found2, found3, found4, found5, found6, found7, found8, found9, found10;
@@ -412,7 +422,7 @@ class Tile {
       }
     } else {
       if (ANIM_STEP > 0) {
-        ANIM_STEP--;
+        ANIM_STEP-=20;
       } else {
         updateSketch();
         animationDirection = "up";

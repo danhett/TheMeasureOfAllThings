@@ -81,7 +81,7 @@ int mult = 100;
 
 // usable output and threshold
 float average = 0.0;
-float threshold = 0.02;
+float threshold = 0.01;
 
 void handleAudioInput() {
   fft.forward(in.mix);

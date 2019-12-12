@@ -41,7 +41,7 @@ class Tile {
 
   // counters. change 'max' if more patterns are added, obviously
   int current = 1;
-  int max = 19;
+  int max = 1;
 
   // draw surfaces for render passes
   PGraphics surface;
@@ -102,6 +102,16 @@ class Tile {
     {#e6e5e1, #a66227, #2c2c2e, #c8ae90, #a67e3f}, 
     {#017ea9, #2d2b71, #e9e1cc, #44999b, #0989ae}
   };
+
+  /*
+  color[][] cols = { 
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
+    {#333333, #444444, #222222, #999999, #F9F9F9},
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
+    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343}
+  };
+  */
 
   // input colours from the artwork
   color found1, found2, found3, found4, found5, found6, found7, found8, found9, found10;
@@ -263,7 +273,7 @@ class Tile {
       }
     } else {
       if (ANIM_STEP > 0) {
-        ANIM_STEP--;
+        ANIM_STEP-=20;
       } else {
         updateSketch();
         animationDirection = "up";

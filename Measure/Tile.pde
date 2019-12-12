@@ -85,6 +85,7 @@ class Tile {
 
   // colours! sampled from various sources. 
   // see: https://www.instagram.com/p/Bu6Y5WeHmYK/
+  /*
   color[][] cols = { 
     {#262e69, #44a5be, #15624c, #8b7350, #bca99d}, 
     {#cb6149, #ce642e, #b19077, #f3e5be, #613839}, 
@@ -102,16 +103,11 @@ class Tile {
     {#e6e5e1, #a66227, #2c2c2e, #c8ae90, #a67e3f}, 
     {#017ea9, #2d2b71, #e9e1cc, #44999b, #0989ae}
   };
-
-  /*
-  color[][] cols = { 
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
-    {#333333, #444444, #222222, #999999, #F9F9F9},
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343}
-  };
   */
+
+  color[][] cols = { 
+    {#FFFFFF, #FFFFFF, #FFFFFF, #FFFFFF, #FFFFFF}
+  };
 
   // input colours from the artwork
   color found1, found2, found3, found4, found5, found6, found7, found8, found9, found10;

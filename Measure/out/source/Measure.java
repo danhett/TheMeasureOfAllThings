@@ -234,33 +234,29 @@ class Tile {
 
   // colours! sampled from various sources. 
   // see: https://www.instagram.com/p/Bu6Y5WeHmYK/
-  int[][] cols = { 
-    {0xff262e69, 0xff44a5be, 0xff15624c, 0xff8b7350, 0xffbca99d}, 
-    {0xffcb6149, 0xffce642e, 0xffb19077, 0xfff3e5be, 0xff613839}, 
-    {0xffe2a6a6, 0xff4abed3, 0xff228f9c, 0xffc52353, 0xffffddb5}, 
-    {0xff7ab191, 0xff35334b, 0xffdfa834, 0xffe8d7bb, 0xfff9caa5}, 
-    {0xffffefe4, 0xffa38976, 0xffc92027, 0xff0d886d, 0xff414da0}, 
-    {0xffd5d2c9, 0xff63beb7, 0xff989dc3, 0xff283679, 0xff9f5d3d}, 
-    {0xffced2db, 0xffcda32c, 0xff2e56a6, 0xff49aa7c, 0xff965924}, 
-    {0xff05698f, 0xff0382a6, 0xff49896b, 0xffd1aa49, 0xff699097}, 
-    {0xfff04f3c, 0xff8180bd, 0xfff1e8e1, 0xffffd79e, 0xff3b5233}, 
-    {0xffefe8de, 0xffbc892c, 0xff272a6b, 0xffca2127, 0xff7c3d21}, 
-    {0xff6b83b4, 0xff56a57e, 0xffb5976a, 0xff27326f, 0xfffef5f9}, 
-    {0xff5481ae, 0xffe45625, 0xfff16577, 0xff0e2917, 0xffede8eb}, 
-    {0xffb76728, 0xff40617a, 0xffeebf39, 0xffc5cad8, 0xffd46b34}, 
-    {0xffe6e5e1, 0xffa66227, 0xff2c2c2e, 0xffc8ae90, 0xffa67e3f}, 
-    {0xff017ea9, 0xff2d2b71, 0xffe9e1cc, 0xff44999b, 0xff0989ae}
-  };
-
   /*
   color[][] cols = { 
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
-    {#333333, #444444, #222222, #999999, #F9F9F9},
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343},
-    {#FFFFFF, #444444, #CCCCCC, #CACACA, #434343}
+    {#262e69, #44a5be, #15624c, #8b7350, #bca99d}, 
+    {#cb6149, #ce642e, #b19077, #f3e5be, #613839}, 
+    {#e2a6a6, #4abed3, #228f9c, #c52353, #ffddb5}, 
+    {#7ab191, #35334b, #dfa834, #e8d7bb, #f9caa5}, 
+    {#ffefe4, #a38976, #c92027, #0d886d, #414da0}, 
+    {#d5d2c9, #63beb7, #989dc3, #283679, #9f5d3d}, 
+    {#ced2db, #cda32c, #2e56a6, #49aa7c, #965924}, 
+    {#05698f, #0382a6, #49896b, #d1aa49, #699097}, 
+    {#f04f3c, #8180bd, #f1e8e1, #ffd79e, #3b5233}, 
+    {#efe8de, #bc892c, #272a6b, #ca2127, #7c3d21}, 
+    {#6b83b4, #56a57e, #b5976a, #27326f, #fef5f9}, 
+    {#5481ae, #e45625, #f16577, #0e2917, #ede8eb}, 
+    {#b76728, #40617a, #eebf39, #c5cad8, #d46b34}, 
+    {#e6e5e1, #a66227, #2c2c2e, #c8ae90, #a67e3f}, 
+    {#017ea9, #2d2b71, #e9e1cc, #44999b, #0989ae}
   };
   */
+
+  int[][] cols = { 
+    {0xffFFFFFF, 0xffFFFFFF, 0xffFFFFFF, 0xffFFFFFF, 0xffFFFFFF}
+  };
 
   // input colours from the artwork
   int found1, found2, found3, found4, found5, found6, found7, found8, found9, found10;

@@ -81,7 +81,7 @@ class Tile {
 
   // frames to keep the final design on for. change holdThreshold for longer/shorter
   int holdCount = 0;
-  int holdThreshold = 80;
+  int holdThreshold = 10;
 
   // colours! sampled from various sources. 
   // see: https://www.instagram.com/p/Bu6Y5WeHmYK/
@@ -109,6 +109,8 @@ class Tile {
   // output colours
   color col1, col2, col3, col4, col5;
   color[] colsTempList = { col1, col2, col3, col4, col5};
+  
+  Boolean canBuild = false;
 
   Tile(Measure ref, int _xPos, int _yPos, float _scaleFactor) {
     reference = ref;
@@ -214,7 +216,8 @@ class Tile {
 
     image(surface, xPos - (width*0.5), yPos - (height*0.5));
 
-    if (reference.INTERACTION_MODE == "wobble")
+    //if (reference.INTERACTION_MODE == "wobble")
+    if(canBuild)
       calculateAnimation();
 
     //if(!reference.USE_OSC) 
@@ -532,5 +535,13 @@ class Tile {
     catch (ReflectiveOperationException cause) {
       throw new RuntimeException(cause);
     }
+  }
+  
+  void enableBuild() {
+     canBuild = true; 
+  }
+  
+  void disableBuild() {
+     canBuild = false; 
   }
 }

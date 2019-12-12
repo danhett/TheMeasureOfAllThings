@@ -14,9 +14,8 @@
 import at.mukprojects.console.*;
 import oscP5.*;
 import netP5.*;
+import codeanticode.syphon.*;
 
-OscP5 oscP5;
-NetAddress myRemoteLocation;
 Tile tile;
 Console console;
 float rectSize = 800;
@@ -24,47 +23,38 @@ float scaleFactor = 0.9;
 float realRectSize = rectSize * scaleFactor;
 
 Boolean DEBUG_MODE = false;
-Boolean USE_OSC = false; // disable this to animate automatically
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
 String INTERACTION_MODE = "wobble"; // "wobble" or "timeline" 
 
-Boolean hasDoneOSCGrossHack = false;
+SyphonServer server;
+
+import ddf.minim.analysis.*;
+import ddf.minim.*;
+
+Minim minim;
+AudioInput in;
+FFT fft;
 
 void setup() {
-  fullScreen(P2D);
-  frameRate(40);
-  //size(1000,800,P2D);
+  //fullScreen(P2D);
+  frameRate(100);
+  size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
 
   tile = new Tile(this, width/2, height/2, scaleFactor);
 
-  if (DEBUG_MODE) 
-    setupConsole();
-}
+  server = new SyphonServer(this, "Measure Of All Things");
+  
+  minim = new Minim(this);
 
-void setupConsole() {
-  console = new Console(this);
-  console.start();
-}
-
-void mousePressed() {
-  tile.updateSketch();
+  in = minim.getLineIn(Minim.STEREO, 2048);
+  fft = new FFT(in.bufferSize(), 44100);
 }
 
 void draw() {
-
-  // do this here once, as it blocks the main thread in setup() and causes a crash
-  if (USE_OSC) {
-    if (!hasDoneOSCGrossHack) {
-      hasDoneOSCGrossHack = true;
-      oscP5 = new OscP5(this, 13000);
-      myRemoteLocation = new NetAddress("127.0.0.1", 12000);
-    }
-  }
-
   if (INVERT_COLOURS)
     background(0);
   else
@@ -77,18 +67,56 @@ void draw() {
   }
 
   tile.draw();
-
-  if (DEBUG_MODE) 
-    drawConsole();
+  
+  server.sendScreen();
+  
+  handleAudioInput();
 }
 
-void drawConsole() {
-  console.draw();  
-  console.print();
+// ranges
+int low = 100;
+int med = 300;
+int high = 800;
+
+// visual multiplier
+int mult = 100;
+
+// usable output and threshold
+float average = 0.0;
+float threshold = 0.05;
+
+void handleAudioInput() {
+  fft.forward(in.mix);
+  
+  average = (fft.getBand(low) + fft.getBand(med) + fft.getBand(high)) / 3;
+  println(average);
+  
+  if(average > threshold) 
+    tile.enableBuild();
+  else
+    tile.disableBuild();
+  
+  fill(255,0,0);
+  rect(0, 0, fft.getBand(low) * mult, 50);
+  
+  fill(0,255,0);
+  rect(0, 50, fft.getBand(med) * mult, 50);
+  
+  fill(0,0,255);
+  rect(0, 100, fft.getBand(high) * mult, 50);
+  
+  noFill();
+  stroke(255);
+  for(int i = 0; i < fft.specSize(); i++)
+  {
+    line(i, height, i, height - fft.getBand(i) * mult);
+  }  
 }
 
-void oscEvent(OscMessage theOscMessage) {
-  if (USE_OSC) {
-    tile.updateValue(theOscMessage.get(0).floatValue());
-  }
+void keyPressed() {
+ // tile.enableBuild();
+}
+
+void keyReleased() {
+  //tile.disableBuild();
 }

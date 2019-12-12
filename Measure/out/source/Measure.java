@@ -141,11 +141,11 @@ public void handleAudioInput() {
 }
 
 public void keyPressed() {
-  tile.enableBuild();
+  toggleDebug();
 }
 
-public void keyReleased() {
-  tile.disableBuild();
+public void toggleDebug() {
+  DEBUG_MODE = !DEBUG_MODE;
 }
 /**
  * THE MEASURE OF ALL THINGS
@@ -189,7 +189,7 @@ class Tile {
   int SVG_CIRCLE = 31;
 
   // counters. change 'max' if more patterns are added, obviously
-  int current = 3;
+  int current = 1;
   int max = 6;
 
   // draw surfaces for render passes

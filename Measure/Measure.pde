@@ -22,7 +22,7 @@ float rectSize = 800;
 float scaleFactor = 0.9;
 float realRectSize = rectSize * scaleFactor;
 
-Boolean DEBUG_MODE = true;
+Boolean DEBUG_MODE = false;
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
@@ -114,9 +114,9 @@ void handleAudioInput() {
 }
 
 void keyPressed() {
-  tile.enableBuild();
+  toggleDebug();
 }
 
-void keyReleased() {
-  tile.disableBuild();
+void toggleDebug() {
+  DEBUG_MODE = !DEBUG_MODE;
 }

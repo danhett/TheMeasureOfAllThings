@@ -42,7 +42,7 @@ class Tile {
   // counters. change 'max' if more patterns are added, obviously
   int current = 1;
   int trans = 1;
-  int max = 7;
+  int max = 10;
 
   // draw surfaces for render passes
   PGraphics surface;

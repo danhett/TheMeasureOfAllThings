@@ -49,6 +49,8 @@ float rectSize = 800;
 float scaleFactor = 0.9f;
 float realRectSize = rectSize * scaleFactor;
 
+Boolean HOLD = true; // entry point, stops mic input until we're ready
+
 Boolean DEBUG_MODE = false;
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
@@ -117,12 +119,15 @@ public void handleAudioInput() {
   average = (fft.getBand(low) + fft.getBand(med) + fft.getBand(high)) / 3;
   //println(average);
   
-  if(average > threshold) 
-    tile.enableBuild();
-  else
-    tile.disableBuild();
+  if(!HOLD) {
+    if(average > threshold) 
+      tile.enableBuild();
+    else
+      tile.disableBuild();
+  }
   
   if(DEBUG_MODE) {
+    /*
     fill(255,0,0);
     rect(0, 0, fft.getBand(low) * mult, 50);
     
@@ -131,6 +136,7 @@ public void handleAudioInput() {
     
     fill(0,0,255);
     rect(0, 100, fft.getBand(high) * mult, 50);
+    */
     
     noFill();
     stroke(255);
@@ -162,6 +168,10 @@ public void keyPressed() {
       threshold -= step;
       println("Moving threshold to " + threshold);
     }
+  }
+
+  if(keyCode == 72) {
+    HOLD = !HOLD;
   }
 }
 
@@ -486,13 +496,17 @@ class Tile {
     fill(255);
     text("- - - - - - - - - - - - -", 50, 140);
 
+    if(reference.HOLD)
+      text("MIC OFF", 50, 160);
+    else 
+      text("MIC ON", 50, 160);
+
     if(reference.average > reference.threshold) {
       fill(0, 255, 0);
     } 
     else {
       fill(255, 0, 0);
     }
-
     text("AV. VOLUME: " + reference.average, 50, 180);
     text("THRESHOLD:  " + reference.threshold, 50, 200);
 

@@ -316,13 +316,17 @@ class Tile {
     fill(255);
     text("- - - - - - - - - - - - -", 50, 140);
 
+    if(reference.HOLD)
+      text("MIC OFF", 50, 160);
+    else 
+      text("MIC ON", 50, 160);
+
     if(reference.average > reference.threshold) {
       fill(0, 255, 0);
     } 
     else {
       fill(255, 0, 0);
     }
-
     text("AV. VOLUME: " + reference.average, 50, 180);
     text("THRESHOLD:  " + reference.threshold, 50, 200);
 

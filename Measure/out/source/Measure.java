@@ -49,7 +49,7 @@ float rectSize = 800;
 float scaleFactor = 0.9f;
 float realRectSize = rectSize * scaleFactor;
 
-Boolean DEBUG_MODE = true;
+Boolean DEBUG_MODE = false;
 Boolean INVERT_COLOURS = true; // set to true for black background with white lines
 Boolean USE_CODE_COLOURS = true; // set to true to ignore the AI cols and generate at runtime
 
@@ -141,11 +141,26 @@ public void handleAudioInput() {
 }
 
 public void keyPressed() {
-  toggleDebug();
+  if(keyCode == 32) 
+    toggleDebug();
+
+  if(keyCode == RIGHT)
+    tile.nextPattern();
+
+  if(keyCode == LEFT)
+    tile.prevPattern();
 }
 
 public void toggleDebug() {
   DEBUG_MODE = !DEBUG_MODE;
+}
+
+public void nextPattern() {
+
+}
+
+public void prevPattern() {
+
 }
 /**
  * THE MEASURE OF ALL THINGS
@@ -190,6 +205,7 @@ class Tile {
 
   // counters. change 'max' if more patterns are added, obviously
   int current = 1;
+  int trans = 1;
   int max = 6;
 
   // draw surfaces for render passes
@@ -308,16 +324,30 @@ class Tile {
     populateOverlay();
   }
 
+  public void nextPattern() {
+    if(trans < max)
+      trans++;
+  }
+
+  public void prevPattern() {
+    if(trans > 0)
+      trans--;
+  }
+
   public void updateSketch() {
     // SEQUENTIAL
-    if (current < max) 
-      current++;
-    else
-      current = 1;
+    //if (current < max) 
+      //current++;
+   // else
+      //current = 1;
 
     // RANDOM
     //current = int(random(max) + 1);
     //println("SWITCHING TO " + current);
+
+    // MANUAL
+    if(current != trans)
+      current = trans;
 
     loadSVGs();
   }
@@ -330,6 +360,7 @@ class Tile {
     pencil.setUseSecondaryColour(false);
 
     pen = HandyPresets.createMarker(reference);
+    pen.setStrokeWeight(2);
     pen.setGraphics(surface);
     pen.setRoughness(1);
 
@@ -439,7 +470,11 @@ class Tile {
 
     text("- - - - - - - - - - - - -", 50, 80);
     text("FPS: " + round(frameRate) + "     STEP: " + CURRENT_STEP + " / " + DRAW_STEPS, 50, 100);
-    text("pattern " + current + " of " + max, 50, 120);
+    
+    if(current != trans) 
+      text("Current pattern: " + current + "/" + max + ". MOVING TO " + trans + " NEXT.", 50, 120);
+    else
+      text("Current pattern: " + current + "/" + max, 50, 120);
 
     if(reference.average > reference.threshold) {
       fill(0, 255, 0);

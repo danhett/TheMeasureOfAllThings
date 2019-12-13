@@ -114,9 +114,24 @@ void handleAudioInput() {
 }
 
 void keyPressed() {
-  toggleDebug();
+  if(keyCode == 32) 
+    toggleDebug();
+
+  if(keyCode == RIGHT)
+    tile.nextPattern();
+
+  if(keyCode == LEFT)
+    tile.prevPattern();
 }
 
 void toggleDebug() {
   DEBUG_MODE = !DEBUG_MODE;
+}
+
+void nextPattern() {
+
+}
+
+void prevPattern() {
+
 }

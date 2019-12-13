@@ -143,8 +143,14 @@ void keyPressed() {
     }
   }
 
+  // H key, toggles microphone on/off
   if(keyCode == 72) {
     HOLD = !HOLD;
+  }
+
+  // R key, resets the pattern back to the first unbroken one
+  if(keyCode == 82) {
+    tile.resetPattern();
   }
 }
 

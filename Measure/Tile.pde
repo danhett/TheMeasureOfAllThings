@@ -166,8 +166,12 @@ class Tile {
   }
 
   void prevPattern() {
-    if(trans > 0)
+    if(trans > 1)
       trans--;
+  }
+
+  void resetPattern() {
+    trans = 1;
   }
 
   void updateSketch() {

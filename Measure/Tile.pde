@@ -42,7 +42,7 @@ class Tile {
   // counters. change 'max' if more patterns are added, obviously
   int current = 1;
   int trans = 1;
-  int max = 6;
+  int max = 7;
 
   // draw surfaces for render passes
   PGraphics surface;
@@ -107,7 +107,7 @@ class Tile {
   */
 
   color[][] cols = { 
-    {#FFFFFF, #FFFFFF, #FFFFFF, #FFFFFF, #FFFFFF}
+    {#c5cad8, #FFFFFF, #FF0000, #FF0000, #FF0000}
   };
 
   // input colours from the artwork
@@ -191,7 +191,7 @@ class Tile {
   void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
     pencil.setGraphics(surface);
-    pencil.setStrokeWeight(1);
+    pencil.setStrokeWeight(0.5);
     pencil.setStrokeColour(150);
     pencil.setRoughness(0.1);
     pencil.setUseSecondaryColour(false);

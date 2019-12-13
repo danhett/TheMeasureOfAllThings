@@ -64,7 +64,7 @@ FFT fft;
 
 public void setup() {
   //fullScreen(P2D);
-  frameRate(100);
+  frameRate(60);
   
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
@@ -108,6 +108,7 @@ int mult = 100;
 
 // usable output and threshold
 float average = 0.0f;
+float step = 0.05f;
 float threshold = 0.01f;
 
 public void handleAudioInput() {
@@ -144,23 +145,28 @@ public void keyPressed() {
   if(keyCode == 32) 
     toggleDebug();
 
+  // go up and down the patterns
   if(keyCode == RIGHT)
     tile.nextPattern();
-
   if(keyCode == LEFT)
     tile.prevPattern();
+
+  // increase or decrease the threshold for audio triggering
+  if(keyCode == UP) {
+    threshold += step;
+    println("Moving threshold to " + threshold);
+  }
+
+  if(keyCode == DOWN) {
+    if(threshold > 0.01f) {
+      threshold -= step;
+      println("Moving threshold to " + threshold);
+    }
+  }
 }
 
 public void toggleDebug() {
   DEBUG_MODE = !DEBUG_MODE;
-}
-
-public void nextPattern() {
-
-}
-
-public void prevPattern() {
-
 }
 /**
  * THE MEASURE OF ALL THINGS
@@ -355,12 +361,13 @@ class Tile {
   public void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
     pencil.setGraphics(surface);
-    pencil.setStrokeWeight(2);
+    pencil.setStrokeWeight(1);
+    pencil.setStrokeColour(150);
     pencil.setRoughness(0.1f);
     pencil.setUseSecondaryColour(false);
 
     pen = HandyPresets.createMarker(reference);
-    pen.setStrokeWeight(2);
+    pen.setStrokeWeight(3);
     pen.setGraphics(surface);
     pen.setRoughness(1);
 
@@ -476,6 +483,9 @@ class Tile {
     else
       text("Current pattern: " + current + "/" + max, 50, 120);
 
+    fill(255);
+    text("- - - - - - - - - - - - -", 50, 140);
+
     if(reference.average > reference.threshold) {
       fill(0, 255, 0);
     } 
@@ -483,7 +493,8 @@ class Tile {
       fill(255, 0, 0);
     }
 
-    text("AV. VOLUME: " + reference.average, 50, 140);
+    text("AV. VOLUME: " + reference.average, 50, 180);
+    text("THRESHOLD:  " + reference.threshold, 50, 200);
 
     noFill();
   }

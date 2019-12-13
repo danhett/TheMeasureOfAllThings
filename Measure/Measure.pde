@@ -37,7 +37,7 @@ FFT fft;
 
 void setup() {
   //fullScreen(P2D);
-  frameRate(100);
+  frameRate(60);
   size(800,800,P2D);
 
   surface.setTitle("THE MEASURE OF ALL THINGS");
@@ -81,6 +81,7 @@ int mult = 100;
 
 // usable output and threshold
 float average = 0.0;
+float step = 0.05;
 float threshold = 0.01;
 
 void handleAudioInput() {
@@ -117,21 +118,26 @@ void keyPressed() {
   if(keyCode == 32) 
     toggleDebug();
 
+  // go up and down the patterns
   if(keyCode == RIGHT)
     tile.nextPattern();
-
   if(keyCode == LEFT)
     tile.prevPattern();
+
+  // increase or decrease the threshold for audio triggering
+  if(keyCode == UP) {
+    threshold += step;
+    println("Moving threshold to " + threshold);
+  }
+
+  if(keyCode == DOWN) {
+    if(threshold > 0.01) {
+      threshold -= step;
+      println("Moving threshold to " + threshold);
+    }
+  }
 }
 
 void toggleDebug() {
   DEBUG_MODE = !DEBUG_MODE;
-}
-
-void nextPattern() {
-
-}
-
-void prevPattern() {
-
 }

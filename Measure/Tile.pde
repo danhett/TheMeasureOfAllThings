@@ -191,12 +191,13 @@ class Tile {
   void createDrawingTools() {
     pencil = HandyPresets.createPencil(reference);
     pencil.setGraphics(surface);
-    pencil.setStrokeWeight(2);
+    pencil.setStrokeWeight(1);
+    pencil.setStrokeColour(150);
     pencil.setRoughness(0.1);
     pencil.setUseSecondaryColour(false);
 
     pen = HandyPresets.createMarker(reference);
-    pen.setStrokeWeight(2);
+    pen.setStrokeWeight(3);
     pen.setGraphics(surface);
     pen.setRoughness(1);
 
@@ -312,6 +313,9 @@ class Tile {
     else
       text("Current pattern: " + current + "/" + max, 50, 120);
 
+    fill(255);
+    text("- - - - - - - - - - - - -", 50, 140);
+
     if(reference.average > reference.threshold) {
       fill(0, 255, 0);
     } 
@@ -319,7 +323,8 @@ class Tile {
       fill(255, 0, 0);
     }
 
-    text("AV. VOLUME: " + reference.average, 50, 140);
+    text("AV. VOLUME: " + reference.average, 50, 180);
+    text("THRESHOLD:  " + reference.threshold, 50, 200);
 
     noFill();
   }
